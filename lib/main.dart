@@ -98,31 +98,37 @@ class WelcomeScreen extends StatelessWidget {
                     ).animate().fadeIn(delay: 800.ms),
                     const SizedBox(height: 48),
                     FilledButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const OnboardingScreen(),
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const OnboardingScreen(),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.arrow_forward_rounded),
+                          label: const Text('Bắt đầu ngay'),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: const Color(0xFF119F63),
+                            foregroundColor: Colors.white,
+                            minimumSize: const Size.fromHeight(62),
+                            elevation: 4,
+                            shadowColor: const Color(
+                              0xFF119F63,
+                            ).withValues(alpha: 0.4),
+                            textStyle: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
                           ),
-                        );
-                      },
-                      icon: const Icon(Icons.arrow_forward_rounded),
-                      label: const Text('Bắt đầu ngay'),
-                      style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFF119F63),
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size.fromHeight(62),
-                        elevation: 4,
-                        shadowColor: const Color(0xFF119F63).withOpacity(0.4),
-                        textStyle: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-                     .shimmer(delay: 3.seconds, duration: 2.seconds),
+                        )
+                        .animate(
+                          onPlay: (controller) =>
+                              controller.repeat(reverse: true),
+                        )
+                        .shimmer(delay: 3.seconds, duration: 2.seconds),
                   ],
                 ),
               ),
@@ -151,7 +157,7 @@ class _LogoMark extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF119F63).withOpacity(.22),
+            color: const Color(0xFF119F63).withValues(alpha: .22),
             blurRadius: 28,
             offset: const Offset(0, 16),
           ),

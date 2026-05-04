@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'TĂ¡ch theo nhĂ³m kim loáº¡i',
     ),
     WasteType(
-      'Äiá»‡n tá»­',
+      'ÄĐiá»‡n tá»­',
       'Theo mĂ³n',
       25000,
       Icons.memory_rounded,
@@ -141,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onSubmitted: () {
           setState(() => _hasActiveOrder = true);
           _showToast(
-            'ÄĂ£ phĂ¡t tĂ­n hiá»‡u. EcoCollect Ä‘ang ghĂ©p ngÆ°á»i thu gom gáº§n nháº¥t.',
+            'ÄĐĂ£ phĂ¡t tĂ­n hiá»‡u. EcoCollect Ä‘ang ghĂ©p ngÆ°á»i thu gom gáº§n nháº¥t.',
           );
         },
       ),
@@ -197,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       case 1:
         _showFeatureSheet(
-          title: 'Äáº·t lá»‹ch gom Ä‘á»‹nh ká»³',
+          title: 'ÄĐáº·t lá»‹ch gom Ä‘á»‹nh ká»³',
           icon: Icons.event_available_rounded,
           children: [
             const _InfoLine(
@@ -213,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
                 _showToast(
-                  'ÄĂ£ táº¡o lá»‹ch gom Ä‘á»‹nh ká»³ vĂ o sĂ¡ng thá»© 7.',
+                  'ÄĐĂ£ táº¡o lá»‹ch gom Ä‘á»‹nh ká»³ vĂ o sĂ¡ng thá»© 7.',
                 );
               },
               icon: const Icon(Icons.add_rounded),
@@ -233,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
               note: 'Giáº¥y, nhá»±a, kim loáº¡i',
             ),
             _StationRow(
-              name: 'Kho Xanh Äá»‘ng Äa',
+              name: 'Kho Xanh ÄĐá»‘ng ÄĐa',
               distance: '2.4km',
               note: 'CĂ³ cĂ¢n Ä‘iá»‡n tá»­',
             ),
@@ -247,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       case 3:
         setState(() => _tab = 3);
-        _showToast('ÄĂ£ má»Ÿ VĂ­ Äiá»ƒm Xanh.');
+        _showToast('ÄĐĂ£ má»Ÿ VĂ­ ÄĐiá»ƒm Xanh.');
         break;
     }
   }
@@ -473,7 +473,7 @@ class _TopBar extends StatelessWidget {
                 Icon(Icons.token_rounded, color: Color(0xFF1F73D6)),
                 SizedBox(width: 8),
                 Text(
-                  '150 Äiá»ƒm',
+                  '150 ÄĐiá»ƒm',
                   style: TextStyle(fontWeight: FontWeight.w800),
                 ),
               ],
@@ -530,7 +530,7 @@ class _CallPanel extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           const Text(
-            'Äá»‹a chá»‰',
+            'ÄĐá»‹a chá»‰',
             style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
           ),
           const SizedBox(height: 8),
@@ -971,7 +971,7 @@ class _ActiveOrderBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Äang ghĂ©p Ä‘Æ¡n quanh Äá»‘ng Äa',
+                    'ÄĐang ghĂ©p Ä‘Æ¡n quanh ÄĐá»‘ng ÄĐa',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -993,7 +993,7 @@ class _ActiveOrderBanner extends StatelessWidget {
                   SnackBar(
                     content: Text(
                       active
-                          ? 'ÄÆ¡n demo: Ä‘ang chá» ngÆ°á»i thu gom xĂ¡c nháº­n.'
+                          ? 'ÄĐÆ¡n demo: Ä‘ang chá» ngÆ°á»i thu gom xĂ¡c nháº­n.'
                           : 'ChÆ°a cĂ³ Ä‘Æ¡n Ä‘ang cháº¡y. HĂ£y phĂ¡t tĂ­n hiá»‡u thu gom.',
                     ),
                     behavior: SnackBarBehavior.floating,
@@ -1139,9 +1139,9 @@ class _QuickActionsBar extends StatelessWidget {
   Widget build(BuildContext context) {
     const actions = [
       (Icons.document_scanner_rounded, 'AI scan', 'Nháº­n diá»‡n rĂ¡c'),
-      (Icons.event_available_rounded, 'Äáº·t lá»‹ch', 'Gom Ä‘á»‹nh ká»³'),
+      (Icons.event_available_rounded, 'ÄĐáº·t lá»‹ch', 'Gom Ä‘á»‹nh ká»³'),
       (Icons.storefront_rounded, 'Tráº¡m gáº§n', 'Tá»± mang ra'),
-      (Icons.card_giftcard_rounded, 'Äá»•i Ä‘iá»ƒm', 'Voucher xanh'),
+      (Icons.card_giftcard_rounded, 'ÄĐá»•i Ä‘iá»ƒm', 'Voucher xanh'),
     ];
 
     return LayoutBuilder(
@@ -1392,7 +1392,7 @@ class _StationFinderCard extends StatelessWidget {
     const stations = [
       ('Tráº¡m Cáº§u Giáº¥y', '1.8km', 'Nháº­n giáº¥y, nhá»±a, kim loáº¡i'),
       (
-        'Kho Xanh Äá»‘ng Äa',
+        'Kho Xanh ÄĐá»‘ng ÄĐa',
         '2.4km',
         'CĂ³ cĂ¢n Ä‘iá»‡n tá»­, nháº­n cá»“ng ká»nh',
       ),
@@ -1407,7 +1407,7 @@ class _StationFinderCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionHeader(title: 'Äiá»ƒm táº­p káº¿t gáº§n báº¡n'),
+          const _SectionHeader(title: 'ÄĐiá»ƒm táº­p káº¿t gáº§n báº¡n'),
           const SizedBox(height: 12),
           Expanded(
             child: ListView.separated(
@@ -1500,7 +1500,7 @@ class _EcoReportCard extends StatelessWidget {
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('ÄĂ£ táº¡o bĂ¡o cĂ¡o demo thĂ¡ng 5.'),
+                        content: Text('ÄĐĂ£ táº¡o bĂ¡o cĂ¡o demo thĂ¡ng 5.'),
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
@@ -1629,7 +1629,7 @@ class _SchedulePickupCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionHeader(title: 'Äáº·t lá»‹ch gom Ä‘á»‹nh ká»³'),
+          const _SectionHeader(title: 'ÄĐáº·t lá»‹ch gom Ä‘á»‹nh ká»³'),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(14),
@@ -1676,7 +1676,7 @@ class _SchedulePickupCard extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text(
-                          'ÄĂ£ táº¡o lá»‹ch gom Ä‘á»‹nh ká»³ sĂ¡ng thá»© 7.',
+                          'ÄĐĂ£ táº¡o lá»‹ch gom Ä‘á»‹nh ká»³ sĂ¡ng thá»© 7.',
                         ),
                         behavior: SnackBarBehavior.floating,
                       ),
@@ -1789,7 +1789,7 @@ class _OrderSheet extends StatelessWidget {
               SwitchListTile(
                 value: true,
                 onChanged: (_) {},
-                title: const Text('Nháº­n báº±ng Äiá»ƒm Xanh'),
+                title: const Text('Nháº­n báº±ng ÄĐiá»ƒm Xanh'),
                 subtitle: const Text(
                   'Tá»± Ä‘á»™ng cá»™ng vĂ o Eco-Wallet sau Ä‘á»‘i soĂ¡t',
                 ),
@@ -1895,14 +1895,14 @@ class _CollectorPage extends StatelessWidget {
           const _HeatmapPanel(),
           const SizedBox(height: 14),
           const _CollectorOrderCard(
-            title: 'ÄÆ¡n má»›i: 12kg giáº¥y bĂ¬a',
-            address: 'NgĂµ 42 ChĂ¹a Bá»™c, Äá»‘ng Äa',
+            title: 'ÄĐÆ¡n má»›i: 12kg giáº¥y bĂ¬a',
+            address: 'NgĂµ 42 ChĂ¹a Bá»™c, ÄĐá»‘ng ÄĐa',
             distance: 'CĂ¡ch 300m',
           ),
           const SizedBox(height: 12),
           const _CollectorOrderCard(
-            title: 'ÄÆ¡n gá»™p: Nhá»±a PET + kim loáº¡i',
-            address: 'KTX Äáº¡i há»c Thá»§y Lá»£i',
+            title: 'ÄĐÆ¡n gá»™p: Nhá»±a PET + kim loáº¡i',
+            address: 'KTX ÄĐáº¡i há»c Thá»§y Lá»£i',
             distance: 'Cách 1.2km',
           ),
         ],
@@ -2033,7 +2033,7 @@ class _WalletPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _SimplePage(
-      title: 'VĂ­ Äiá»ƒm Xanh',
+      title: 'VĂ­ ÄĐiá»ƒm Xanh',
       child: Column(
         children: [
           Container(
@@ -2054,7 +2054,7 @@ class _WalletPage extends StatelessWidget {
                 ),
                 SizedBox(height: 6),
                 Text(
-                  '150 Äiá»ƒm',
+                  '150 ÄĐiá»ƒm',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 34,
@@ -2099,11 +2099,11 @@ class _ProfilePage extends StatelessWidget {
           _ProfileField(icon: Icons.phone_rounded, text: '0988 000 000'),
           _ProfileField(
             icon: Icons.location_on_rounded,
-            text: 'Sá»‘ 12 ChĂ¹a Bá»™c, Äá»‘ng Äa, HĂ  Ná»™i',
+            text: 'Sá»‘ 12 ChĂ¹a Bá»™c, ÄĐá»‘ng ÄĐa, HĂ  Ná»™i',
           ),
           _ProfileField(
             icon: Icons.verified_user_rounded,
-            text: 'ÄĂ£ xĂ¡c thá»±c sá»‘ Ä‘iá»‡n thoáº¡i',
+            text: 'ÄĐĂ£ xĂ¡c thá»±c sá»‘ Ä‘iá»‡n thoáº¡i',
           ),
         ],
       ),
@@ -2252,7 +2252,7 @@ class _CollectorOrderCard extends StatelessWidget {
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('ÄĂ£ nháº­n: $title'),
+                  content: Text('ÄĐĂ£ nháº­n: $title'),
                   behavior: SnackBarBehavior.floating,
                 ),
               );
@@ -2283,7 +2283,7 @@ class _RewardTile extends StatelessWidget {
       onTap: () {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('ÄĂ£ Ä‘á»•i thá»­ $title vá»›i $points.'),
+            content: Text('ÄĐĂ£ Ä‘á»•i thá»­ $title vá»›i $points.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -2706,7 +2706,7 @@ class _MiniLogo extends StatelessWidget {
                 ),
               ),
               Text(
-                'Äá»“ng nĂ¡t Online',
+                'ÄĐá»“ng nĂ¡t Online',
                 style: TextStyle(color: Color(0xFF60736D), height: 1),
               ),
             ],

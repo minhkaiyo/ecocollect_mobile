@@ -35,7 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _OnboardingItem(
       title: 'Tích điểm sống xanh',
       description:
-          'Nháº­n tiá»n hoáº·c Ä‘á»•i sang Äiá»ƒm Xanh Ä‘á»ƒ láº¥y voucher, náº¡p Ä‘iá»‡n thoáº¡i vĂ  gĂ³p quá»¹ trá»“ng cĂ¢y.',
+          'Nháº­n tiá»n hoáº·c Ä‘á»•i sang ÄĐiá»ƒm Xanh Ä‘á»ƒ láº¥y voucher, náº¡p Ä‘iá»‡n thoáº¡i vĂ  gĂ³p quá»¹ trá»“ng cĂ¢y.',
       icon: FontAwesomeIcons.leaf,
       color: Color(0xFFEEB72F),
     ),

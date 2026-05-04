@@ -1,0 +1,49 @@
+import os
+
+def fix_file_bytes(filepath):
+    with open(filepath, 'rb') as f:
+        content = f.read()
+
+    replacements = {
+        b'\xc2\x90ang': b'\xc4\x90ang',
+        b'ch\xc2\x9d': b'ch\xe1\xbb\x9d',
+        b'g\xc2\x8dn': b'g\xe1\xbb\x8dn',
+        b'gi\xc2\x9d': b'gi\xe1\xbb\x9d',
+        b'\xc2\x90i\xe1\xbb\x83m': b'\xc4\x90i\xe1\xbb\x83m',
+        b'tr\xc6\xb0\xc2\x9dng': b'tr\xc6\xb0\xe1\xbb\x9dng',
+        b'\xc2\x90\xe1\xba\xb7t': b'\xc4\x90\xe1\xba\xb7t',
+        b'ch\xc2\x8dn': b'ch\xe1\xbb\x8dn',
+        b'D\xc2\x8dn': b'D\xe1\xbb\x8dn',
+        b'\xc2\x90\xc3\xa3': b'\xc4\x90\xc3\xa3',
+        b'ng\xc6\xb0\xc2\x9di': b'ng\xc6\xb0\xe1\xbb\x9di',
+        b'h\xc2\x8dc': b'h\xe1\xbb\x8dc',
+        b'\xc2\x90\xe1\xba\xa1i': b'\xc4\x90\xe1\xba\xa1i',
+        b'V\xc2\x8f': b'V\xe1\xbb\x8f',
+        b'k\xc2\x81nh': b'k\xe1\xbb\x81nh',
+        b'Tr\xc2\x8dng': b'Tr\xe1\xbb\x8dng',
+        b'\xc4\x91\xc2\x8f': b'\xc4\x91\xe1\xbb\x8f', # đỏ
+        b'n\xc2\x81n': b'n\xe1\xbb\x81n',
+        b'nhi\xc2\x81u': b'nhi\xe1\xbb\x81u',
+        b'\xc2\x90\xe1\xbb\x91ng': b'\xc4\x90\xe1\xbb\x91ng',
+        b'T\xc2\x8dN': b'T\xc3\x8dN',
+        b'PH\xc2\x81T': b'PH\xc3\x81T',
+        b'\xc2\x90\xc6\xa1n': b'\xc4\x90\xc6\xa1n',
+        b'\xc2\x90\xe1\xbb\x95i': b'\xc4\x90\xe1\xbb\x95i',
+        b'\xc2\x90\xe1\xbb\x93ng': b'\xc4\x90\xe1\xbb\x93ng',
+        b'\xc2\x90\xe1\xbb\x8ba': b'\xc4\x90\xe1\xbb\x8ba',
+        b'\xc2\x90\xc3\xb3n': b'\xc4\x90\xc3\xb3n',
+    }
+
+    for bad, good in replacements.items():
+        content = content.replace(bad, good)
+        
+    # Also catch standalone Đ
+    content = content.replace(b'\xc2\x90', b'\xc4\x90')
+
+    with open(filepath, 'wb') as f:
+        f.write(content)
+        
+    print(f"Fixed bytes in {filepath}")
+
+fix_file_bytes('lib/screens/home_screen.dart')
+fix_file_bytes('lib/screens/onboarding_screen.dart')
