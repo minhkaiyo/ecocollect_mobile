@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,14 +28,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _OnboardingItem(
       title: 'Kết nối nhanh chóng',
       description:
-          'Radar tìm người thu gom trong bán kính gần nhất hoặc gợi ý trạm tập kết phù hợp.',
+          'Radar tĂ¬m ngÆ°á»i thu gom trong bĂ¡n kĂ­nh gáº§n nháº¥t hoáº·c gá»£i Ă½ tráº¡m táº­p káº¿t phĂ¹ há»£p.',
       icon: FontAwesomeIcons.locationDot,
       color: Color(0xFF1F73D6),
     ),
     _OnboardingItem(
       title: 'Tích điểm sống xanh',
       description:
-          'Nhận tiền hoặc đổi sang Điểm Xanh để lấy voucher, nạp điện thoại và góp quỹ trồng cây.',
+          'Nháº­n tiá»n hoáº·c Ä‘á»•i sang Äiá»ƒm Xanh Ä‘á»ƒ láº¥y voucher, náº¡p Ä‘iá»‡n thoáº¡i vĂ  gĂ³p quá»¹ trá»“ng cĂ¢y.',
       icon: FontAwesomeIcons.leaf,
       color: Color(0xFFEEB72F),
     ),
@@ -71,7 +71,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   TextButton(
                     onPressed: _goHome,
                     child: Text(
-                      'Bỏ qua',
+                      'Bá» qua',
                       style: GoogleFonts.inter(
                         color: const Color(0xFF60736D),
                         fontSize: 16,
@@ -211,11 +211,11 @@ class _OnboardingVisual extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [item.color.withOpacity(.16), Colors.white],
+          colors: [item.color.withValues(alpha: .16), Colors.white],
         ),
         boxShadow: [
           BoxShadow(
-            color: item.color.withOpacity(.18),
+            color: item.color.withValues(alpha: .18),
             blurRadius: 34,
             offset: const Offset(0, 18),
           ),
@@ -229,7 +229,7 @@ class _OnboardingVisual extends StatelessWidget {
             top: 34,
             child: Icon(
               Icons.auto_awesome_rounded,
-              color: item.color.withOpacity(.38),
+              color: item.color.withValues(alpha: .38),
               size: 34,
             ),
           ),
@@ -238,7 +238,7 @@ class _OnboardingVisual extends StatelessWidget {
             bottom: 36,
             child: Icon(
               Icons.recycling_rounded,
-              color: item.color.withOpacity(.28),
+              color: item.color.withValues(alpha: .28),
               size: 46,
             ),
           ),
@@ -248,11 +248,11 @@ class _OnboardingVisual extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(36),
               gradient: LinearGradient(
-                colors: [item.color.withOpacity(.78), item.color],
+                colors: [item.color.withValues(alpha: .78), item.color],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: item.color.withOpacity(.28),
+                  color: item.color.withValues(alpha: .28),
                   blurRadius: 24,
                   offset: const Offset(0, 14),
                 ),
