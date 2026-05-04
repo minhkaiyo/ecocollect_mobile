@@ -15,44 +15,44 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<WasteType> _wasteTypes = const [
     WasteType(
-      'Giáº¥y',
+      'Giấy',
       '4.500 - 6.000',
       5200,
       Icons.article_rounded,
       Color(0xFF119F63),
-      'Ă‰p pháº³ng, buá»™c gá»n',
+      'Ép phẳng, buộc gọn',
     ),
     WasteType(
-      'Nhá»±a',
+      'Nhựa',
       '7.000 - 9.500',
       8200,
       Icons.water_drop_rounded,
       Color(0xFF1F73D6),
-      'LĂ m sáº¡ch, thĂ¡o nhĂ£n',
+      'Làm sạch, tháo nhãn',
     ),
     WasteType(
-      'Kim loáº¡i',
+      'Kim loại',
       '12.000 - 15.000',
       13500,
       Icons.view_in_ar_rounded,
       Color(0xFF68717A),
-      'TĂ¡ch theo nhĂ³m kim loáº¡i',
+      'Tách theo nhóm kim loại',
     ),
     WasteType(
-      'ÄĐiá»‡n tá»­',
-      'Theo mĂ³n',
+      'Điện tử',
+      'Theo món',
       25000,
       Icons.memory_rounded,
       Color(0xFF7D55C7),
-      'Báº£o quáº£n nguyĂªn khá»‘i',
+      'Bảo quản nguyên khối',
     ),
     WasteType(
-      'Cá»“ng ká»nh',
-      'Háº¹n giĂ¡',
+      'Cồng kềnh',
+      'Hẹn giá',
       0,
       Icons.chair_rounded,
       Color(0xFFE78B25),
-      'Chá»¥p áº£nh trÆ°á»›c khi gá»­i',
+      'Chụp ảnh trước khi gửi',
     ),
   ];
 
@@ -74,8 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     selectedWaste: _selectedWaste,
                     weight: _weight,
                     hasActiveOrder: _hasActiveOrder,
-                    onWasteChanged: (value) =>
-                        setState(() => _selectedWaste = value),
+                    onWasteChanged: (value) => setState(() => _selectedWaste = value),
                     onWeightChanged: (value) => setState(() => _weight = value),
                     onCreateOrder: _showOrderSheet,
                     onQuickAction: _handleQuickAction,
@@ -101,11 +100,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 NavigationDestination(
                   icon: Icon(Icons.home_outlined),
                   selectedIcon: Icon(Icons.home_rounded),
-                  label: 'Trang chá»§',
+                  label: 'Trang chủ',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.history_rounded),
-                  label: 'Lá»‹ch sá»­',
+                  label: 'Lịch sử',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.map_outlined),
@@ -115,12 +114,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 NavigationDestination(
                   icon: Icon(Icons.account_balance_wallet_outlined),
                   selectedIcon: Icon(Icons.account_balance_wallet_rounded),
-                  label: 'VĂ­ Xanh',
+                  label: 'Ví Xanh',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.settings_outlined),
                   selectedIcon: Icon(Icons.settings_rounded),
-                  label: 'CĂ i Ä‘áº·t',
+                  label: 'Cài đặt',
                 ),
               ],
             ),
@@ -141,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onSubmitted: () {
           setState(() => _hasActiveOrder = true);
           _showToast(
-            'ÄĐĂ£ phĂ¡t tĂ­n hiá»‡u. EcoCollect Ä‘ang ghĂ©p ngÆ°á»i thu gom gáº§n nháº¥t.',
+            'Đã phát tín hiệu. EcoCollect đang ghép người thu gom gần nhất.',
           );
         },
       ),
@@ -152,20 +151,20 @@ class _HomeScreenState extends State<HomeScreen> {
     final cleanQuery = query.trim();
     if (cleanQuery.isEmpty) return;
     _showFeatureSheet(
-      title: 'Káº¿t quáº£ tĂ¬m kiáº¿m',
+      title: 'Kết quả tìm kiếm',
       icon: Icons.search_rounded,
       children: [
-        _InfoLine(
+        const _InfoLine(
           icon: Icons.price_change_rounded,
-          text: 'Giáº¥y bĂ¬a: 4.500 - 6.000 VND/kg',
+          text: 'Giấy bìa: 4.500 - 6.000 VND/kg',
         ),
-        _InfoLine(
+        const _InfoLine(
           icon: Icons.storefront_rounded,
-          text: 'Tráº¡m Cáº§u Giáº¥y cĂ¡ch 1.8km, Ä‘ang má»Ÿ cá»­a',
+          text: 'Trạm Cầu Giấy cách 1.8km, đang mở cửa',
         ),
-        _InfoLine(
+        const _InfoLine(
           icon: Icons.menu_book_rounded,
-          text: 'Cáº©m nang: lĂ m sáº¡ch, phĂ¢n nhĂ³m trÆ°á»›c khi gá»­i',
+          text: 'Cẩm nang: làm sạch, phân nhóm trước khi gọi',
         ),
       ],
     );
@@ -175,79 +174,78 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (index) {
       case 0:
         _showFeatureSheet(
-          title: 'AI scan pháº¿ liá»‡u',
+          title: 'AI scan phế liệu',
           icon: Icons.document_scanner_rounded,
           children: const [
             _ScanPreviewCard(),
             _InfoLine(
               icon: Icons.check_circle_rounded,
-              text: 'Vá» lon bia: 90% - NhĂ´m',
+              text: 'Vỏ lon bia: 90% - Nhôm',
             ),
             _InfoLine(
               icon: Icons.check_circle_rounded,
-              text: 'ThĂ¹ng carton: 86% - Giáº¥y bĂ¬a',
+              text: 'Thùng carton: 86% - Giấy bìa',
             ),
             _InfoLine(
               icon: Icons.tips_and_updates_rounded,
-              text:
-                  'Gá»£i Ă½: chá»¥p rĂµ ná»n, trĂ¡nh trá»™n nhiá»u nhĂ³m rĂ¡c',
+              text: 'Gợi ý: chụp nền rõ nét, tránh trộn nhiều nhóm rác',
             ),
           ],
         );
         break;
       case 1:
         _showFeatureSheet(
-          title: 'ÄĐáº·t lá»‹ch gom Ä‘á»‹nh ká»³',
+          title: 'Đặt lịch gom định kỳ',
           icon: Icons.event_available_rounded,
           children: [
             const _InfoLine(
               icon: Icons.calendar_month_rounded,
-              text: 'Thá»© 7 háº±ng tuáº§n - 09:00 Ä‘áº¿n 11:00',
+              text: 'Thứ 7 hằng tuần - 09:00 đến 11:00',
             ),
             const _InfoLine(
               icon: Icons.notifications_active_rounded,
-              text: 'Nháº¯c trÆ°á»›c 2 giá» qua thĂ´ng bĂ¡o app',
+              text: 'Nhắc trước 2 giờ qua thông báo app',
             ),
             const SizedBox(height: 8),
             FilledButton.icon(
               onPressed: () {
                 Navigator.of(context).pop();
                 _showToast(
-                  'ÄĐĂ£ táº¡o lá»‹ch gom Ä‘á»‹nh ká»³ vĂ o sĂ¡ng thá»© 7.',
+                  'Đã tạo lịch gom định kỳ vào sáng thứ 7.',
                 );
               },
               icon: const Icon(Icons.add_rounded),
-              label: const Text('Táº¡o lá»‹ch demo'),
+              label: const Text('Tạo lịch demo'),
             ),
           ],
         );
         break;
       case 2:
         _showFeatureSheet(
-          title: 'Trạm tập kết gáº§n báº¡n',
+          title: 'Trạm tập kết gần bạn',
           icon: Icons.storefront_rounded,
           children: const [
             _StationRow(
-              name: 'Tráº¡m Cáº§u Giáº¥y',
+              name: 'Trạm Cầu Giấy',
               distance: '1.8km',
-              note: 'Giáº¥y, nhá»±a, kim loáº¡i',
+              note: 'Giấy, nhựa, kim loại',
             ),
             _StationRow(
-              name: 'Kho Xanh ÄĐá»‘ng ÄĐa',
+              name: 'Kho Xanh Đống Đa',
               distance: '2.4km',
-              note: 'CĂ³ cĂ¢n Ä‘iá»‡n tá»­',
+              note: 'Có cân điện tử',
             ),
             _StationRow(
-              name: 'Hub BĂ¡ch Khoa',
+              name: 'Hub Bách Khoa',
               distance: '3.1km',
-              note: 'Pin, linh kiá»‡n Ä‘iá»‡n tá»­',
+              note: 'Pin, linh kiện điện tử',
             ),
           ],
         );
         break;
       case 3:
         setState(() => _tab = 3);
-        _showToast('ÄĐĂ£ má»Ÿ VĂ­ ÄĐiá»ƒm Xanh.');
+        _showToast('Đã mở Ví Điểm Xanh.');
         break;
     }
   }
@@ -428,7 +426,6 @@ class _HomeDashboard extends StatelessWidget {
 
 class _TopBar extends StatelessWidget {
   const _TopBar({required this.isWide, required this.onSearch});
-
   final bool isWide;
   final ValueChanged<String> onSearch;
 
@@ -445,8 +442,7 @@ class _TopBar extends StatelessWidget {
               child: TextField(
                 onSubmitted: onSearch,
                 decoration: InputDecoration(
-                  hintText:
-                      'GiĂ¡ thá»‹ trÆ°á»ng, tráº¡m táº­p káº¿t, cáº©m nang phĂ¢n loáº¡i',
+                  hintText: 'Giá thị trường, trạm tập kết, cẩm nang phân loại',
                   prefixIcon: const Icon(Icons.search_rounded),
                   filled: true,
                   fillColor: Colors.white,
@@ -460,7 +456,7 @@ class _TopBar extends StatelessWidget {
           ] else
             const Spacer(),
           const SizedBox(width: 14),
-          _IconBadge(icon: Icons.notifications_none_rounded, badge: '1'),
+          const _IconBadge(icon: Icons.notifications_none_rounded, badge: '1'),
           const SizedBox(width: 10),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
@@ -473,7 +469,7 @@ class _TopBar extends StatelessWidget {
                 Icon(Icons.token_rounded, color: Color(0xFF1F73D6)),
                 SizedBox(width: 8),
                 Text(
-                  '150 ÄĐiá»ƒm',
+                  '150 Điểm',
                   style: TextStyle(fontWeight: FontWeight.w800),
                 ),
               ],
@@ -511,7 +507,7 @@ class _CallPanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Dá»n rĂ¡c thĂ´ng minh - TĂ­ch lÅ©y sá»‘ng xanh',
+            'Dọn rác thông minh - Tích lũy sống xanh',
             style: TextStyle(
               fontSize: 30,
               height: 1.12,
@@ -521,7 +517,7 @@ class _CallPanel extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           const Text(
-            'Nháº­p Ä‘á»‹a chá»‰, chá»n nhĂ³m pháº¿ liá»‡u vĂ  phĂ¡t tĂ­n hiá»‡u Ä‘á»ƒ há»‡ thá»‘ng ghĂ©p ngÆ°á»i thu gom hoáº·c tráº¡m táº­p káº¿t gáº§n nháº¥t.',
+            'Nhập địa chỉ, chọn nhóm phế liệu và phát tín hiệu để hệ thống ghép người thu gom hoặc trạm tập kết gần nhất.',
             style: TextStyle(
               color: Color(0xFF60736D),
               height: 1.35,
@@ -530,13 +526,13 @@ class _CallPanel extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           const Text(
-            'ÄĐá»‹a chá»‰',
+            'Địa chỉ',
             style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
           ),
           const SizedBox(height: 8),
           TextField(
             decoration: InputDecoration(
-              hintText: 'VĂ­ dá»¥: Sá»‘ 12 ChĂ¹a Bá»™c, HĂ  Ná»™i',
+              hintText: 'Ví dụ: Số 12 Chùa Bộc, Hà Nội',
               prefixIcon: const Icon(Icons.location_on_outlined),
               filled: true,
               fillColor: const Color(0xFFF8FAF9),
@@ -547,7 +543,7 @@ class _CallPanel extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           const Text(
-            'Loáº¡i pháº¿ liá»‡u',
+            'Loại phế liệu',
             style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
           ),
           const SizedBox(height: 10),
@@ -581,7 +577,7 @@ class _CallPanel extends StatelessWidget {
           Row(
             children: [
               const Text(
-                'Trá»ng lÆ°á»£ng Æ°á»›c tĂ­nh',
+                'Trọng lượng ước tính',
                 style: TextStyle(fontWeight: FontWeight.w800),
               ),
               const Spacer(),
@@ -602,12 +598,12 @@ class _CallPanel extends StatelessWidget {
           Row(
             children: [
               const Text(
-                'Táº¡m tĂ­nh',
+                'Tạm tính',
                 style: TextStyle(color: Color(0xFF60736D)),
               ),
               const Spacer(),
               Text(
-                '${_money(estimate)} Ä‘',
+                '${_money(estimate)} đ',
                 style: const TextStyle(
                   color: Color(0xFF0B6B4B),
                   fontSize: 20,
@@ -630,7 +626,7 @@ class _CallPanel extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    '${wasteTypes[selectedWaste].guide}. GiĂ¡ tá»± Ä‘á»™ng Ä‘á»‘i chiáº¿u khi cĂ¢n thá»±c táº¿.',
+                    '${wasteTypes[selectedWaste].guide}. Giá tự động đối chiếu khi cân thực tế.',
                     style: const TextStyle(
                       color: Color(0xFF31524A),
                       height: 1.3,
@@ -648,7 +644,7 @@ class _CallPanel extends StatelessWidget {
             child: FilledButton.icon(
               onPressed: onCreateOrder,
               icon: const Icon(Icons.radar_rounded),
-              label: const Text('PHĂT TĂN HIá»†U THU GOM'),
+              label: const Text('PHÁT TÍN HIỆU THU GOM'),
               style: FilledButton.styleFrom(
                 textStyle: const TextStyle(
                   fontSize: 16,
@@ -668,7 +664,6 @@ class _CallPanel extends StatelessWidget {
 
 class _RadarMap extends StatelessWidget {
   const _RadarMap({required this.height});
-
   final double height;
 
   @override
@@ -681,7 +676,6 @@ class _RadarMap extends StatelessWidget {
       Offset(.68, .76),
       Offset(.88, .24),
     ];
-
     return _Panel(
       padding: EdgeInsets.zero,
       child: SizedBox(
@@ -693,7 +687,7 @@ class _RadarMap extends StatelessWidget {
               child: Row(
                 children: [
                   const Text(
-                    'Radar TĂ¬m NgÆ°á»i Thu Gom',
+                    'Radar Tìm Người Thu Gom',
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
                   ),
                   const Spacer(),
@@ -740,10 +734,9 @@ class _RadarMap extends StatelessWidget {
                                 width: 150 * value,
                                 height: 150 * value,
                                 decoration: BoxDecoration(
-                                  color: const Color(
-                                    0xFF119F63,
-                                  ).withValues(alpha: .18 * (1 - value)),
                                   shape: BoxShape.circle,
+                                  color: const Color(0xFF119F63)
+                                      .withOpacity(.18 * (1 - value)),
                                 ),
                               ),
                               child!,
@@ -762,13 +755,13 @@ class _RadarMap extends StatelessWidget {
                       ),
                     ),
                     ...collectors.map((point) => _CollectorPin(point: point)),
-                    Positioned(
+                    const Positioned(
                       right: 16,
                       bottom: 16,
                       child: _MapPill(
                         icon: Icons.place_rounded,
                         text: 'Trạm tập kết',
-                        color: const Color(0xFF119F63),
+                        color: Color(0xFF119F63),
                       ),
                     ),
                     Positioned(
@@ -777,7 +770,7 @@ class _RadarMap extends StatelessWidget {
                       child: Text(
                         'EcoMap',
                         style: TextStyle(
-                          color: Colors.black.withValues(alpha: .35),
+                          color: Colors.black.withOpacity(.35),
                           fontWeight: FontWeight.w900,
                           fontSize: 18,
                         ),
@@ -796,7 +789,6 @@ class _RadarMap extends StatelessWidget {
 
 class _CollectorPin extends StatelessWidget {
   const _CollectorPin({required this.point});
-
   final Offset point;
 
   @override
@@ -814,7 +806,7 @@ class _CollectorPin extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: .12),
+                  color: Colors.black.withOpacity(.12),
                   blurRadius: 10,
                   offset: const Offset(0, 5),
                 ),
@@ -834,7 +826,7 @@ class _CollectorPin extends StatelessWidget {
               borderRadius: BorderRadius.circular(999),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: .08),
+                  color: Colors.black.withOpacity(.08),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -853,7 +845,6 @@ class _CollectorPin extends StatelessWidget {
 
 class _ResponsiveGrid extends StatelessWidget {
   const _ResponsiveGrid({required this.children});
-
   final List<Widget> children;
 
   @override
@@ -863,8 +854,8 @@ class _ResponsiveGrid extends StatelessWidget {
         final crossAxisCount = constraints.maxWidth >= 1050
             ? 4
             : constraints.maxWidth >= 720
-            ? 2
-            : 1;
+                ? 2
+                : 1;
         return GridView.count(
           crossAxisCount: crossAxisCount,
           shrinkWrap: true,
@@ -881,7 +872,6 @@ class _ResponsiveGrid extends StatelessWidget {
 
 class _MarketCard extends StatelessWidget {
   const _MarketCard({required this.wasteTypes});
-
   final List<WasteType> wasteTypes;
 
   @override
@@ -891,7 +881,7 @@ class _MarketCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const _SectionHeader(
-            title: 'GiĂ¡ thá»‹ trÆ°á»ng hĂ´m nay',
+            title: 'Giá thị trường hôm nay',
             live: true,
           ),
           const SizedBox(height: 10),
@@ -940,7 +930,6 @@ class _MarketCard extends StatelessWidget {
 
 class _ActiveOrderBanner extends StatelessWidget {
   const _ActiveOrderBanner({required this.active});
-
   final bool active;
 
   @override
@@ -954,7 +943,7 @@ class _ActiveOrderBanner extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF119F63).withValues(alpha: .18),
+            color: const Color(0xFF119F63).withOpacity(.18),
             blurRadius: 24,
             offset: const Offset(0, 14),
           ),
@@ -966,12 +955,12 @@ class _ActiveOrderBanner extends StatelessWidget {
           final content = [
             _LivePulse(active: active),
             const SizedBox(width: 12, height: 12),
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'ÄĐang ghĂ©p Ä‘Æ¡n quanh ÄĐá»‘ng ÄĐa',
+                    'Đang ghép đơn quanh Đống Đa',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -980,7 +969,7 @@ class _ActiveOrderBanner extends StatelessWidget {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    '3 ngÆ°á»i thu gom sáºµn sĂ ng, thá»i gian Ä‘áº¿n dá»± kiáº¿n 8-12 phĂºt.',
+                    '3 người thu gom sẵn sàng, thời gian đến dự kiến 8-12 phút.',
                     style: TextStyle(color: Colors.white70, height: 1.35),
                   ),
                 ],
@@ -993,22 +982,21 @@ class _ActiveOrderBanner extends StatelessWidget {
                   SnackBar(
                     content: Text(
                       active
-                          ? 'ÄĐÆ¡n demo: Ä‘ang chá» ngÆ°á»i thu gom xĂ¡c nháº­n.'
-                          : 'ChÆ°a cĂ³ Ä‘Æ¡n Ä‘ang cháº¡y. HĂ£y phĂ¡t tĂ­n hiá»‡u thu gom.',
+                          ? 'Đơn demo: đang chờ người thu gom xác nhận.'
+                          : 'Chưa có đơn đang chạy. Hãy phát tín hiệu thu gom.',
                     ),
                     behavior: SnackBarBehavior.floating,
                   ),
                 );
               },
               icon: const Icon(Icons.route_rounded, size: 18),
-              label: const Text('Theo dĂµi'),
+              label: const Text('Theo dõi'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white,
                 side: const BorderSide(color: Colors.white54),
               ),
             ),
           ];
-
           if (compact) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1028,7 +1016,6 @@ class _ActiveOrderBanner extends StatelessWidget {
 
 class _LivePulse extends StatelessWidget {
   const _LivePulse({required this.active});
-
   final bool active;
 
   @override
@@ -1049,7 +1036,7 @@ class _LivePulse extends StatelessWidget {
                 height: 52 * value,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: .18 * (1 - value)),
+                  color: Colors.white.withOpacity(.18 * (1 - value)),
                 ),
               );
             },
@@ -1075,12 +1062,11 @@ class _ImpactStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const items = [
-      (Icons.recycling_rounded, '1.284 kg', 'Ä‘Ă£ thu há»“i'),
-      (Icons.groups_rounded, '46', 'ngÆ°á»i thu gom'),
-      (Icons.storefront_rounded, '12', 'tráº¡m tĂ¡i cháº¿'),
-      (Icons.forest_rounded, '38 cĂ¢y', 'quá»¹ xanh'),
+      (Icons.recycling_rounded, '1.284 kg', 'đã thu hồi'),
+      (Icons.groups_rounded, '46', 'người thu gom'),
+      (Icons.storefront_rounded, '12', 'trạm tái chế'),
+      (Icons.forest_rounded, '38 cây', 'quỹ xanh'),
     ];
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final compact = constraints.maxWidth < 760;
@@ -1132,18 +1118,16 @@ class _ImpactStrip extends StatelessWidget {
 
 class _QuickActionsBar extends StatelessWidget {
   const _QuickActionsBar({required this.onAction});
-
   final ValueChanged<int> onAction;
 
   @override
   Widget build(BuildContext context) {
     const actions = [
-      (Icons.document_scanner_rounded, 'AI scan', 'Nháº­n diá»‡n rĂ¡c'),
-      (Icons.event_available_rounded, 'ÄĐáº·t lá»‹ch', 'Gom Ä‘á»‹nh ká»³'),
-      (Icons.storefront_rounded, 'Tráº¡m gáº§n', 'Tá»± mang ra'),
-      (Icons.card_giftcard_rounded, 'ÄĐá»•i Ä‘iá»ƒm', 'Voucher xanh'),
+      (Icons.document_scanner_rounded, 'AI scan', 'Nhận diện rác'),
+      (Icons.event_available_rounded, 'Đặt lịch', 'Gom định kỳ'),
+      (Icons.storefront_rounded, 'Trạm gần', 'Tự mang ra'),
+      (Icons.card_giftcard_rounded, 'Đổi điểm', 'Voucher xanh'),
     ];
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final compact = constraints.maxWidth < 760;
@@ -1216,7 +1200,6 @@ class _QuickActionsBar extends StatelessWidget {
 
 class _PaperBankCard extends StatelessWidget {
   const _PaperBankCard({required this.progress});
-
   final double progress;
 
   @override
@@ -1237,14 +1220,14 @@ class _PaperBankCard extends StatelessWidget {
             child: Icon(
               Icons.library_books_rounded,
               size: 92,
-              color: Colors.white.withValues(alpha: .34),
+              color: Colors.white.withOpacity(.34),
             ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'NgĂ¢n hĂ ng giáº¥y',
+                'Ngân hàng giấy',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -1253,7 +1236,7 @@ class _PaperBankCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Gom giáº¥y Ä‘á»‹nh ká»³ cho lá»›p, vÄƒn phĂ²ng vĂ  kĂ½ tĂºc xĂ¡.',
+                'Gom giấy định kỳ cho lớp, văn phòng và kí túc xá.',
                 style: TextStyle(color: Colors.white, height: 1.35),
               ),
               const Spacer(),
@@ -1262,13 +1245,13 @@ class _PaperBankCard extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: (progress / 50).clamp(0, 1),
                   minHeight: 12,
-                  backgroundColor: Colors.white.withValues(alpha: .55),
+                  backgroundColor: Colors.white.withOpacity(.55),
                   color: const Color(0xFFFFC857),
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'Tiáº¿n Ä‘á»™ tuáº§n nĂ y: ${progress.toStringAsFixed(0)} / 50kg',
+                'Tiến độ tuần này: ${progress.toStringAsFixed(0)} / 50kg',
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
@@ -1291,7 +1274,7 @@ class _AiScanCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionHeader(title: 'QuĂ©t & PhĂ¢n Loáº¡i AI'),
+          const _SectionHeader(title: 'Quét & Phân Loại AI'),
           const SizedBox(height: 12),
           Container(
             height: 92,
@@ -1311,15 +1294,15 @@ class _AiScanCard extends StatelessWidget {
           const SizedBox(height: 12),
           const _DetectionRow(
             icon: Icons.local_drink_rounded,
-            title: 'Vá» lon bia',
-            subtitle: 'NhĂ´m',
+            title: 'Vỏ lon bia',
+            subtitle: 'Nhôm',
             score: '90%',
           ),
           const SizedBox(height: 8),
           const _DetectionRow(
             icon: Icons.inventory_2_rounded,
-            title: 'ThĂ¹ng carton',
-            subtitle: 'Giáº¥y bĂ¬a',
+            title: 'Thùng carton',
+            subtitle: 'Giấy bìa',
             score: '86%',
           ),
         ],
@@ -1334,16 +1317,16 @@ class _SortingGuideCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const rows = [
-      ('Tháº» xanh', 'Giáº¥y bĂ¬a Ă©p pháº³ng, buá»™c gá»n'),
-      ('Tháº» vĂ ng', 'Nhá»±a PET lĂ m sáº¡ch bĂªn trong'),
-      ('Tháº» Ä‘á»', 'Kim loáº¡i tĂ¡ch riĂªng theo nhĂ³m'),
-      ('Tháº» tĂ­m', 'Linh kiá»‡n Ä‘iá»‡n tá»­ giá»¯ nguyĂªn khá»‘i'),
+      ('Thẻ xanh', 'Giấy bìa ép phẳng, buộc gọn'),
+      ('Thẻ vàng', 'Nhựa PET làm sạch bên trong'),
+      ('Thẻ đỏ', 'Kim loại tách riêng theo nhóm'),
+      ('Thẻ tím', 'Linh kiện điện tử giữ nguyên khối'),
     ];
     return _Panel(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionHeader(title: 'Cáº©m nang phĂ¢n loáº¡i'),
+          const _SectionHeader(title: 'Cẩm nang phân loại'),
           const SizedBox(height: 10),
           ...rows.map(
             (row) => Padding(
@@ -1390,24 +1373,23 @@ class _StationFinderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const stations = [
-      ('Tráº¡m Cáº§u Giáº¥y', '1.8km', 'Nháº­n giáº¥y, nhá»±a, kim loáº¡i'),
+      ('Trạm Cầu Giấy', '1.8km', 'Nhận giấy, nhựa, kim loại'),
       (
-        'Kho Xanh ÄĐá»‘ng ÄĐa',
+        'Kho Xanh Đống Đa',
         '2.4km',
-        'CĂ³ cĂ¢n Ä‘iá»‡n tá»­, nháº­n cá»“ng ká»nh',
+        'Có cân điện tử, nhận cồng kềnh',
       ),
       (
-        'Hub TĂ¡i cháº¿ BĂ¡ch Khoa',
+        'Hub Tái Chế Bách Khoa',
         '3.1km',
-        'Nháº­n pin vĂ  linh kiá»‡n Ä‘iá»‡n tá»­',
+        'Nhận pin và linh kiện điện tử',
       ),
     ];
-
     return _Panel(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionHeader(title: 'ÄĐiá»ƒm táº­p káº¿t gáº§n báº¡n'),
+          const _SectionHeader(title: 'Điểm tập kết gần bạn'),
           const SizedBox(height: 12),
           Expanded(
             child: ListView.separated(
@@ -1467,10 +1449,10 @@ class _EcoReportCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionHeader(title: 'BĂ¡o cĂ¡o thĂ¡ng 5'),
+          const _SectionHeader(title: 'Báo cáo tháng 5'),
           const SizedBox(height: 14),
           const Text(
-            'Tá»· lá»‡ phĂ¢n loáº¡i Ä‘Ăºng',
+            'Tỷ lệ phân loại đúng',
             style: TextStyle(color: Color(0xFF60736D)),
           ),
           const SizedBox(height: 6),
@@ -1489,7 +1471,7 @@ class _EcoReportCard extends StatelessWidget {
             style: TextStyle(fontSize: 34, fontWeight: FontWeight.w900),
           ),
           const Text(
-            'Báº¡n Ä‘Ă£ giáº£m 18.6kg CO2e so vá»›i xá»­ lĂ½ rĂ¡c láº«n.',
+            'Bạn đã giảm 18.6kg CO2e so với xử lý rác lẫn.',
             style: TextStyle(color: Color(0xFF60736D), height: 1.35),
           ),
           const Spacer(),
@@ -1500,13 +1482,13 @@ class _EcoReportCard extends StatelessWidget {
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('ÄĐĂ£ táº¡o bĂ¡o cĂ¡o demo thĂ¡ng 5.'),
+                        content: Text('Đã tạo báo cáo demo tháng 5.'),
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
                   },
                   icon: const Icon(Icons.file_download_outlined, size: 18),
-                  label: const Text('Xuáº¥t bĂ¡o cĂ¡o'),
+                  label: const Text('Xuất báo cáo'),
                 ),
               ),
             ],
@@ -1523,17 +1505,16 @@ class _CollectorMatchCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const collectors = [
-      ('CĂ´ Lan', '4.9', '300m', Color(0xFF119F63)),
-      ('ChĂº HĂ¹ng', '4.8', '1.2km', Color(0xFF1F73D6)),
+      ('Cô Lan', '4.9', '300m', Color(0xFF119F63)),
+      ('Chú Hùng', '4.8', '1.2km', Color(0xFF1F73D6)),
       ('Anh Nam', '4.7', '1.8km', Color(0xFFE78B25)),
     ];
-
     return _Panel(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const _SectionHeader(
-            title: 'NgÆ°á»i thu gom phĂ¹ há»£p',
+            title: 'Người thu gom phù hợp',
             live: true,
           ),
           const SizedBox(height: 12),
@@ -1553,7 +1534,7 @@ class _CollectorMatchCard extends StatelessWidget {
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
                           colors: [
-                            collector.$4.withValues(alpha: .78),
+                            collector.$4.withOpacity(.78),
                             collector.$4,
                           ],
                         ),
@@ -1601,7 +1582,7 @@ class _CollectorMatchCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: const Text(
-                        'Sáºµn sĂ ng',
+                        'Sẵn sàng',
                         style: TextStyle(
                           color: Color(0xFF119F63),
                           fontWeight: FontWeight.w900,
@@ -1629,7 +1610,7 @@ class _SchedulePickupCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionHeader(title: 'ÄĐáº·t lá»‹ch gom Ä‘á»‹nh ká»³'),
+          const _SectionHeader(title: 'Đặt lịch gom định kỳ'),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(14),
@@ -1649,11 +1630,11 @@ class _SchedulePickupCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Thá»© 7 háº±ng tuáº§n',
+                        'Thứ 7 hằng tuần',
                         style: TextStyle(fontWeight: FontWeight.w900),
                       ),
                       Text(
-                        'Nháº¯c trÆ°á»›c 2 giá»',
+                        'Nhắc trước 2 giờ',
                         style: TextStyle(color: Color(0xFF60736D)),
                       ),
                     ],
@@ -1664,7 +1645,7 @@ class _SchedulePickupCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           const Text(
-            'PhĂ¹ há»£p cho vÄƒn phĂ²ng, lá»›p há»c, kĂ½ tĂºc xĂ¡ vĂ  há»™ gia Ä‘Ă¬nh tĂ­ch rĂ¡c theo tuáº§n.',
+            'Phù hợp cho văn phòng, lớp học, kí túc xá và hộ gia đình tách rác theo tuần.',
             style: TextStyle(color: Color(0xFF60736D), height: 1.35),
           ),
           const Spacer(),
@@ -1676,14 +1657,14 @@ class _SchedulePickupCard extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text(
-                          'ÄĐĂ£ táº¡o lá»‹ch gom Ä‘á»‹nh ká»³ sĂ¡ng thá»© 7.',
+                          'Đã tạo lịch gom định kỳ sáng thứ 7.',
                         ),
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
                   },
                   icon: const Icon(Icons.add_rounded),
-                  label: const Text('Táº¡o lá»‹ch má»›i'),
+                  label: const Text('Tạo lịch mới'),
                 ),
               ),
             ],
@@ -1735,7 +1716,7 @@ class _OrderSheet extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               const Text(
-                'XĂ¡c nháº­n Ä‘Æ¡n thu gom',
+                'Xác nhận đơn thu gom',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
               ),
               const SizedBox(height: 16),
@@ -1753,7 +1734,7 @@ class _OrderSheet extends StatelessWidget {
                   ),
                   _ConfirmChip(
                     icon: Icons.payments_rounded,
-                    label: '${_money(total)} Ä‘',
+                    label: '${_money(total)} đ',
                   ),
                 ],
               ),
@@ -1775,11 +1756,11 @@ class _OrderSheet extends StatelessWidget {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      'Chá»¥p áº£nh Ä‘á»‘ng rĂ¡c',
+                      'Chụp ảnh đống rác',
                       style: TextStyle(fontWeight: FontWeight.w900),
                     ),
                     Text(
-                      'GiĂºp ngÆ°á»i gom chuáº©n bá»‹ xe vĂ  cĂ¢n phĂ¹ há»£p',
+                      'Giúp người gom chuẩn bị xe và cân phù hợp',
                       style: TextStyle(color: Color(0xFF60736D)),
                     ),
                   ],
@@ -1789,9 +1770,9 @@ class _OrderSheet extends StatelessWidget {
               SwitchListTile(
                 value: true,
                 onChanged: (_) {},
-                title: const Text('Nháº­n báº±ng ÄĐiá»ƒm Xanh'),
+                title: const Text('Nhận bằng Điểm Xanh'),
                 subtitle: const Text(
-                  'Tá»± Ä‘á»™ng cá»™ng vĂ o Eco-Wallet sau Ä‘á»‘i soĂ¡t',
+                  'Tự động cộng vào Eco-Wallet sau đối soát',
                 ),
                 secondary: const Icon(
                   Icons.token_rounded,
@@ -1806,7 +1787,7 @@ class _OrderSheet extends StatelessWidget {
                 },
                 icon: const Icon(Icons.done_all_rounded),
                 label: const Text(
-                  'Gá»­i Ä‘Æ¡n cho ngÆ°á»i thu gom gáº§n nháº¥t',
+                  'Gửi đơn cho người thu gom gần nhất',
                 ),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(56),
@@ -1826,18 +1807,17 @@ class _OrderSheet extends StatelessWidget {
 
 class _HistoryPage extends StatelessWidget {
   const _HistoryPage({required this.wasteTypes});
-
   final List<WasteType> wasteTypes;
 
   @override
   Widget build(BuildContext context) {
     final rows = [
-      ('03/05/2026', wasteTypes[0], '8 kg', '+42 Ä‘iá»ƒm'),
-      ('28/04/2026', wasteTypes[1], '5 kg', '+36 Ä‘iá»ƒm'),
-      ('21/04/2026', wasteTypes[2], '2 kg', '+54 Ä‘iá»ƒm'),
+      ('03/05/2026', wasteTypes[0], '8 kg', '+42 điểm'),
+      ('28/04/2026', wasteTypes[1], '5 kg', '+36 điểm'),
+      ('21/04/2026', wasteTypes[2], '2 kg', '+54 điểm'),
     ];
     return _SimplePage(
-      title: 'Sao kĂª rĂ¡c tháº£i',
+      title: 'Sao kê rác thải',
       child: Column(
         children: rows
             .map(
@@ -1885,7 +1865,7 @@ class _CollectorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _SimplePage(
-      title: 'Giao diá»‡n ngÆ°á»i thu mua',
+      title: 'Giao diện người thu mua',
       child: Column(
         children: [
           const _CollectorStats(),
@@ -1895,14 +1875,14 @@ class _CollectorPage extends StatelessWidget {
           const _HeatmapPanel(),
           const SizedBox(height: 14),
           const _CollectorOrderCard(
-            title: 'ÄĐÆ¡n má»›i: 12kg giáº¥y bĂ¬a',
-            address: 'NgĂµ 42 ChĂ¹a Bá»™c, ÄĐá»‘ng ÄĐa',
-            distance: 'CĂ¡ch 300m',
+            title: 'Đơn mới: 12kg giấy bìa',
+            address: 'Ngõ 42 Chùa Bộc, Đống Đa',
+            distance: 'Cách 300m',
           ),
           const SizedBox(height: 12),
           const _CollectorOrderCard(
-            title: 'ÄĐÆ¡n gá»™p: Nhá»±a PET + kim loáº¡i',
-            address: 'KTX ÄĐáº¡i há»c Thá»§y Lá»£i',
+            title: 'Đơn gộp: Nhựa PET + kim loại',
+            address: 'KTX Đại học Thủy Lợi',
             distance: 'Cách 1.2km',
           ),
         ],
@@ -1920,18 +1900,16 @@ class _CollectorStats extends StatelessWidget {
       builder: (context, constraints) {
         final compact = constraints.maxWidth < 680;
         const stats = [
-          (Icons.route_rounded, '6.4km', 'tuyáº¿n tá»‘i Æ°u'),
-          (Icons.inventory_2_rounded, '5 Ä‘Æ¡n', 'cĂ³ thá»ƒ ghĂ©p'),
-          (Icons.payments_rounded, '186k', 'doanh thu dá»± kiáº¿n'),
+          (Icons.route_rounded, '6.4km', 'tuyến tối ưu'),
+          (Icons.inventory_2_rounded, '5 đơn', 'có thể ghép'),
+          (Icons.payments_rounded, '186k', 'doanh thu dự kiến'),
         ];
         return Wrap(
           spacing: 12,
           runSpacing: 12,
           children: stats.map((stat) {
             return SizedBox(
-              width: compact
-                  ? constraints.maxWidth
-                  : (constraints.maxWidth - 24) / 3,
+              width: compact ? constraints.maxWidth : (constraints.maxWidth - 24) / 3,
               child: _Panel(
                 padding: const EdgeInsets.all(16),
                 child: Row(
@@ -1973,16 +1951,15 @@ class _HeatmapPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const zones = [
-      ('KTX - TrÆ°á»ng há»c', .92, Color(0xFF119F63)),
-      ('VÄƒn phĂ²ng Cáº§u Giáº¥y', .74, Color(0xFF1F73D6)),
-      ('Chá»£ dĂ¢n sinh', .58, Color(0xFFE78B25)),
+      ('KTX - Trường học', .92, Color(0xFF119F63)),
+      ('Văn phòng Cầu Giấy', .74, Color(0xFF1F73D6)),
+      ('Chợ dân sinh', .58, Color(0xFFE78B25)),
     ];
-
     return _Panel(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionHeader(title: 'Báº£n Ä‘á»“ nhiá»‡t Ä‘Æ¡n gom'),
+          const _SectionHeader(title: 'Bản đồ nhiệt đơn gom'),
           const SizedBox(height: 12),
           ...zones.map(
             (zone) => Padding(
@@ -2033,7 +2010,7 @@ class _WalletPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _SimplePage(
-      title: 'VĂ­ ÄĐiá»ƒm Xanh',
+      title: 'Ví Điểm Xanh',
       child: Column(
         children: [
           Container(
@@ -2049,12 +2026,12 @@ class _WalletPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Sá»‘ dÆ° hiá»‡n táº¡i',
+                  'Số dư hiện tại',
                   style: TextStyle(color: Colors.white70, fontSize: 15),
                 ),
                 SizedBox(height: 6),
                 Text(
-                  '150 ÄĐiá»ƒm',
+                  '150 Điểm',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 34,
@@ -2068,17 +2045,17 @@ class _WalletPage extends StatelessWidget {
           const _RewardTile(
             icon: Icons.local_cafe_rounded,
             title: 'Voucher cafe',
-            points: '80 Ä‘iá»ƒm',
+            points: '80 điểm',
           ),
           const _RewardTile(
             icon: Icons.phone_android_rounded,
-            title: 'Náº¡p Ä‘iá»‡n thoáº¡i',
-            points: '120 Ä‘iá»ƒm',
+            title: 'Nạp điện thoại',
+            points: '120 điểm',
           ),
           const _RewardTile(
             icon: Icons.forest_rounded,
-            title: 'GĂ³p quá»¹ trá»“ng cĂ¢y',
-            points: '50 Ä‘iá»ƒm',
+            title: 'Góp quỹ trồng cây',
+            points: '50 điểm',
           ),
         ],
       ),
@@ -2092,18 +2069,18 @@ class _ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const _SimplePage(
-      title: 'Há»“ sÆ¡ cĂ¡ nhĂ¢n',
+      title: 'Hồ sơ cá nhân',
       child: Column(
         children: [
-          _ProfileField(icon: Icons.person_rounded, text: 'Nguyá»…n Minh'),
+          _ProfileField(icon: Icons.person_rounded, text: 'Phạm Văn Minh'),
           _ProfileField(icon: Icons.phone_rounded, text: '0988 000 000'),
           _ProfileField(
             icon: Icons.location_on_rounded,
-            text: 'Sá»‘ 12 ChĂ¹a Bá»™c, ÄĐá»‘ng ÄĐa, HĂ  Ná»™i',
+            text: 'Số 12 Chùa Bộc, Đống Đa, Hà Nội',
           ),
           _ProfileField(
             icon: Icons.verified_user_rounded,
-            text: 'ÄĐĂ£ xĂ¡c thá»±c sá»‘ Ä‘iá»‡n thoáº¡i',
+            text: 'Đã xác thực số điện thoại',
           ),
         ],
       ),
@@ -2113,18 +2090,17 @@ class _ProfilePage extends StatelessWidget {
 
 class _SideNav extends StatelessWidget {
   const _SideNav({required this.tab, required this.onChanged});
-
   final int tab;
   final ValueChanged<int> onChanged;
 
   @override
   Widget build(BuildContext context) {
     const items = [
-      (Icons.home_rounded, 'Trang chá»§'),
-      (Icons.history_rounded, 'Lá»‹ch sá»­'),
+      (Icons.home_rounded, 'Trang chủ'),
+      (Icons.history_rounded, 'Lịch sử'),
       (Icons.map_rounded, 'Thu mua'),
-      (Icons.account_balance_wallet_rounded, 'VĂ­ Xanh'),
-      (Icons.settings_rounded, 'CĂ i Ä‘áº·t'),
+      (Icons.account_balance_wallet_rounded, 'Ví Xanh'),
+      (Icons.settings_rounded, 'Cài đặt'),
     ];
     return Container(
       width: 128,
@@ -2153,27 +2129,21 @@ class _SideNav extends StatelessWidget {
                     vertical: 14,
                   ),
                   decoration: BoxDecoration(
-                    color: active
-                        ? const Color(0xFFEAF8F1)
-                        : Colors.transparent,
+                    color: active ? const Color(0xFFEAF8F1) : Colors.transparent,
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: Column(
                     children: [
                       Icon(
                         item.$1,
-                        color: active
-                            ? const Color(0xFF119F63)
-                            : const Color(0xFF7B8783),
+                        color: active ? const Color(0xFF119F63) : const Color(0xFF7B8783),
                       ),
                       const SizedBox(height: 6),
                       Text(
                         item.$2,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: active
-                              ? const Color(0xFF119F63)
-                              : const Color(0xFF7B8783),
+                          color: active ? const Color(0xFF119F63) : const Color(0xFF7B8783),
                           fontWeight: FontWeight.w800,
                           fontSize: 12,
                         ),
@@ -2192,7 +2162,6 @@ class _SideNav extends StatelessWidget {
 
 class _SimplePage extends StatelessWidget {
   const _SimplePage({required this.title, required this.child});
-
   final String title;
   final Widget child;
 
@@ -2252,13 +2221,13 @@ class _CollectorOrderCard extends StatelessWidget {
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('ÄĐĂ£ nháº­n: $title'),
+                  content: Text('Đã nhận: $title'),
                   behavior: SnackBarBehavior.floating,
                 ),
               );
             },
             icon: const Icon(Icons.navigation_rounded, size: 18),
-            label: const Text('Nháº­n'),
+            label: const Text('Nhận'),
           ),
         ],
       ),
@@ -2283,7 +2252,7 @@ class _RewardTile extends StatelessWidget {
       onTap: () {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('ÄĐĂ£ Ä‘á»•i thá»­ $title vá»›i $points.'),
+            content: Text('Đã đổi thưởng $title với $points.'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -2303,8 +2272,8 @@ class _RewardTile extends StatelessWidget {
             ),
             Text(
               points,
-              style: const TextStyle(
-                color: Color(0xFF1F73D6),
+              style: TextStyle(
+                color: const Color(0xFF1F73D6),
                 fontWeight: FontWeight.w900,
               ),
             ),
@@ -2317,7 +2286,6 @@ class _RewardTile extends StatelessWidget {
 
 class _ProfileField extends StatelessWidget {
   const _ProfileField({required this.icon, required this.text});
-
   final IconData icon;
   final String text;
 
@@ -2383,7 +2351,6 @@ class _DetectionRow extends StatelessWidget {
 
 class _ConfirmChip extends StatelessWidget {
   const _ConfirmChip({required this.icon, required this.label});
-
   final IconData icon;
   final String label;
 
@@ -2401,7 +2368,6 @@ class _ConfirmChip extends StatelessWidget {
 
 class _InfoLine extends StatelessWidget {
   const _InfoLine({required this.icon, required this.text});
-
   final IconData icon;
   final String text;
 
@@ -2452,20 +2418,20 @@ class _ScanPreviewCard extends StatelessWidget {
               size: 52,
             ),
           ),
-          Positioned(
+          const Positioned(
             left: 28,
             top: 30,
             child: _ScanBox(
-              label: 'Nhá»±a PET',
-              color: const Color(0xFF1F73D6),
+              label: 'Nhựa PET',
+              color: Color(0xFF1F73D6),
             ),
           ),
-          Positioned(
+          const Positioned(
             right: 24,
             bottom: 30,
             child: _ScanBox(
-              label: 'Kim loáº¡i',
-              color: const Color(0xFFE76F51),
+              label: 'Kim loại',
+              color: Color(0xFFE76F51),
             ),
           ),
         ],
@@ -2476,7 +2442,6 @@ class _ScanPreviewCard extends StatelessWidget {
 
 class _ScanBox extends StatelessWidget {
   const _ScanBox({required this.label, required this.color});
-
   final String label;
   final Color color;
 
@@ -2485,7 +2450,7 @@ class _ScanBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: .12),
+        color: color.withOpacity(.12),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color),
       ),
@@ -2564,7 +2529,7 @@ class _Panel extends StatelessWidget {
         border: Border.all(color: const Color(0xFFE1E9E6)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: .05),
+            color: Colors.black.withOpacity(.05),
             blurRadius: 18,
             offset: const Offset(0, 10),
           ),
@@ -2577,7 +2542,6 @@ class _Panel extends StatelessWidget {
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.title, this.live = false});
-
   final String title;
   final bool live;
 
@@ -2609,7 +2573,6 @@ class _SectionHeader extends StatelessWidget {
 
 class _IconTile extends StatelessWidget {
   const _IconTile({required this.icon, required this.color});
-
   final IconData icon;
   final Color color;
 
@@ -2619,7 +2582,7 @@ class _IconTile extends StatelessWidget {
       width: 46,
       height: 46,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: .12),
+        color: color.withOpacity(.12),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Icon(icon, color: color),
@@ -2629,7 +2592,6 @@ class _IconTile extends StatelessWidget {
 
 class _IconBadge extends StatelessWidget {
   const _IconBadge({required this.icon, required this.badge});
-
   final IconData icon;
   final String badge;
 
@@ -2673,7 +2635,6 @@ class _IconBadge extends StatelessWidget {
 
 class _MiniLogo extends StatelessWidget {
   const _MiniLogo({this.compact = false});
-
   final bool compact;
 
   @override
@@ -2706,7 +2667,7 @@ class _MiniLogo extends StatelessWidget {
                 ),
               ),
               Text(
-                'ÄĐá»“ng nĂ¡t Online',
+                'Đồng nát Online',
                 style: TextStyle(color: Color(0xFF60736D), height: 1),
               ),
             ],
@@ -2719,7 +2680,6 @@ class _MiniLogo extends StatelessWidget {
 
 class _MapPill extends StatelessWidget {
   const _MapPill({required this.icon, required this.text, required this.color});
-
   final IconData icon;
   final String text;
   final Color color;
@@ -2733,7 +2693,7 @@ class _MapPill extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: .12),
+            color: Colors.black.withOpacity(.12),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -2756,7 +2716,6 @@ class _MapPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final bg = Paint()..color = const Color(0xFFEAF0F4);
     canvas.drawRect(Offset.zero & size, bg);
-
     final water = Paint()..color = const Color(0xFFD5E6F6);
     canvas.drawRRect(
       RRect.fromRectAndRadius(
@@ -2770,7 +2729,6 @@ class _MapPainter extends CustomPainter {
       ),
       water,
     );
-
     final road = Paint()
       ..color = Colors.white
       ..strokeWidth = 8
@@ -2779,7 +2737,6 @@ class _MapPainter extends CustomPainter {
       ..color = Colors.white
       ..strokeWidth = 4
       ..strokeCap = StrokeCap.round;
-
     for (var i = 0; i < 7; i++) {
       final y = size.height * (i / 6);
       canvas.drawLine(Offset(0, y), Offset(size.width, y - 70), road);
@@ -2788,7 +2745,6 @@ class _MapPainter extends CustomPainter {
       final x = size.width * (i / 5);
       canvas.drawLine(Offset(x, 0), Offset(x + 90, size.height), smallRoad);
     }
-
     final park = Paint()..color = const Color(0xFFDDEFE4);
     canvas.drawOval(
       Rect.fromCenter(
@@ -2816,7 +2772,7 @@ class _RoutePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final shadow = Paint()
-      ..color = Colors.black.withValues(alpha: .08)
+      ..color = Colors.black.withOpacity(.08)
       ..strokeWidth = 8
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
@@ -2825,7 +2781,6 @@ class _RoutePainter extends CustomPainter {
       ..strokeWidth = 4
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
-
     final path = Path()
       ..moveTo(size.width * .22, size.height * .68)
       ..cubicTo(
@@ -2852,10 +2807,8 @@ class _RoutePainter extends CustomPainter {
         size.width * .88,
         size.height * .24,
       );
-
     canvas.drawPath(path, shadow);
     canvas.drawPath(path, route);
-
     final dash = Paint()
       ..color = Colors.white
       ..strokeWidth = 2
@@ -2883,7 +2836,6 @@ class WasteType {
     this.color,
     this.guide,
   );
-
   final String name;
   final String range;
   final int price;

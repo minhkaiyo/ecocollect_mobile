@@ -78,7 +78,7 @@ class WelcomeScreen extends StatelessWidget {
                     ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2),
                     const SizedBox(height: 6),
                     const Text(
-                      'Đồng nát Online',
+                      'Äá»“ng nĂ¡t Online',
                       style: TextStyle(
                         fontSize: 18,
                         color: Color(0xFF60736D),
@@ -88,7 +88,7 @@ class WelcomeScreen extends StatelessWidget {
                     ).animate().fadeIn(delay: 600.ms),
                     const SizedBox(height: 24),
                     const Text(
-                      'Ngân hàng rác thải số kết nối hộ gia đình, người thu gom và trạm tái chế trong một quy trình sạch, minh bạch.',
+                      'NgĂ¢n hĂ ng rĂ¡c tháº£i sá»‘ káº¿t ná»‘i há»™ gia Ä‘Ă¬nh, ngÆ°á»i thu gom vĂ  tráº¡m tĂ¡i cháº¿ trong má»™t quy trĂ¬nh sáº¡ch, minh báº¡ch.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
@@ -106,7 +106,7 @@ class WelcomeScreen extends StatelessWidget {
                             );
                           },
                           icon: const Icon(Icons.arrow_forward_rounded),
-                          label: const Text('Bắt đầu ngay'),
+                          label: const Text('Báº¯t Ä‘áº§u ngay'),
                           style: FilledButton.styleFrom(
                             backgroundColor: const Color(0xFF119F63),
                             foregroundColor: Colors.white,
