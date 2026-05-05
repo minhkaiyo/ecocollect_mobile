@@ -1,40 +1,144 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import 'persistence/launch_state.dart';
+import 'screens/auth_screen.dart';
+import 'screens/home_screen.dart';
 import 'screens/onboarding_screen.dart';
+import 'theme/app_theme.dart';
+import 'theme/eco_colors.dart';
+import 'repositories/user_repository.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'firebase_options.dart';
+
+Future<void> main() async {
+  // 1. Khởi tạo cầu nối Flutter - Native
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 2. Kích hoạt Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // 3. Bật tính năng Offline-First (Lưu data khi rớt mạng)
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+  );
+
   runApp(const EcoCollectApp());
 }
 
-class EcoCollectApp extends StatelessWidget {
+class EcoCollectApp extends StatefulWidget {
   const EcoCollectApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const emerald = Color(0xFF119F63);
+  State<EcoCollectApp> createState() => _EcoCollectAppState();
+}
 
+class _EcoCollectAppState extends State<EcoCollectApp> {
+  bool _prefsLoaded = false;
+  bool _onboardingComplete = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLaunchState();
+  }
+
+  Future<void> _loadLaunchState() async {
+    final done = await isOnboardingComplete();
+    if (!mounted) return;
+    setState(() {
+      _onboardingComplete = done;
+      _prefsLoaded = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       title: 'EcoCollect',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: emerald,
-          primary: emerald,
-          secondary: const Color(0xFF1F73D6),
-          surface: Colors.white,
-        ),
-        scaffoldBackgroundColor: const Color(0xFFF5F8F7),
-        textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          foregroundColor: Color(0xFF102A24),
+      theme: buildEcoTheme(),
+      builder: (context, child) {
+        if (!kIsWeb) return child!;
+        return ColoredBox(
+          color: EcoColors.webChromeBg,
+          child: Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 430),
+              margin: const EdgeInsets.symmetric(vertical: 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(40),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.15),
+                    blurRadius: 30,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(40),
+                child: child!,
+              ),
+            ),
+          ),
+        );
+      },
+      home: !_prefsLoaded
+          ? const _LaunchPlaceholder()
+          : (_onboardingComplete
+              ? const _AuthWrapper()
+              : const WelcomeScreen()),
+    );
+  }
+}
+
+class _AuthWrapper extends StatelessWidget {
+  const _AuthWrapper();
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const _LaunchPlaceholder();
+        }
+        if (snapshot.hasData) {
+          final user = snapshot.data!;
+          // Khởi tạo profile nếu chưa có
+          UserRepository().createUserIfNotExists(user);
+          return const HomeScreen();
+        }
+        return const AuthScreen();
+      },
+    );
+  }
+}
+
+class _LaunchPlaceholder extends StatelessWidget {
+  const _LaunchPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: ColoredBox(
+        color: EcoColors.welcomeGradientEnd,
+        child: Center(
+          child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
       ),
-      home: const WelcomeScreen(),
     );
   }
 }
@@ -48,87 +152,79 @@ class WelcomeScreen extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFEAF8F1), Color(0xFFFFFFFF), Color(0xFFEAF2FF)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.white, EcoColors.welcomeGradientEnd],
           ),
         ),
         child: SafeArea(
           child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 440),
-              child: Padding(
-                padding: const EdgeInsets.all(28),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 440),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const _LogoMark(size: 132)
-                        .animate()
-                        .fadeIn(duration: 800.ms)
-                        .scale(delay: 200.ms)
-                        .shimmer(delay: 1200.ms, duration: 1500.ms),
-                    const SizedBox(height: 28),
+                    const _LogoMark(),
+                    const SizedBox(height: 48),
                     Text(
                       'EcoCollect',
-                      style: GoogleFonts.inter(
-                        fontSize: 42,
+                      style: GoogleFonts.beVietnamPro(
+                        fontSize: 58,
                         fontWeight: FontWeight.w900,
-                        color: const Color(0xFF0B6B4B),
+                        color: EcoColors.primaryDark,
+                        letterSpacing: -1.5,
                       ),
-                    ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2),
-                    const SizedBox(height: 6),
-                    const Text(
-                      'Äá»“ng nĂ¡t Online',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF60736D),
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.5,
+                    ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.2),
+                    Text(
+                      'Đồng nát Online',
+                      style: GoogleFonts.beVietnamPro(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: EcoColors.bodySecondary,
+                        letterSpacing: 0.5,
                       ),
-                    ).animate().fadeIn(delay: 600.ms),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'NgĂ¢n hĂ ng rĂ¡c tháº£i sá»‘ káº¿t ná»‘i há»™ gia Ä‘Ă¬nh, ngÆ°á»i thu gom vĂ  tráº¡m tĂ¡i cháº¿ trong má»™t quy trĂ¬nh sáº¡ch, minh báº¡ch.',
+                    ).animate().fadeIn(delay: 400.ms),
+                    const SizedBox(height: 32),
+                    Text(
+                      'Ngân hàng rác thải số kết nối hộ gia đình, người thu gom và trạm tái chế trong một quy trình sạch, minh bạch.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: GoogleFonts.beVietnamPro(
                         fontSize: 16,
-                        height: 1.45,
-                        color: Color(0xFF52645F),
+                        height: 1.6,
+                        color: EcoColors.bodyMuted,
+                        fontWeight: FontWeight.w500,
                       ),
                     ).animate().fadeIn(delay: 800.ms),
                     const SizedBox(height: 48),
                     FilledButton.icon(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => const OnboardingScreen(),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.arrow_forward_rounded),
-                          label: const Text('Báº¯t Ä‘áº§u ngay'),
-                          style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFF119F63),
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size.fromHeight(62),
-                            elevation: 4,
-                            shadowColor: const Color(
-                              0xFF119F63,
-                            ).withValues(alpha: 0.4),
-                            textStyle: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const OnboardingScreen(),
                           ),
-                        )
-                        .animate(
-                          onPlay: (controller) =>
-                              controller.repeat(reverse: true),
-                        )
-                        .shimmer(delay: 3.seconds, duration: 2.seconds),
+                        );
+                      },
+                      icon: const Icon(Icons.arrow_forward_rounded),
+                      label: const Text('Bắt đầu ngay'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: EcoColors.primary,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size.fromHeight(62),
+                        elevation: 4,
+                        shadowColor: EcoColors.primary.withValues(alpha: 0.4),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                    ).animate(
+                      onPlay: (controller) => controller.repeat(reverse: true),
+                    ).shimmer(delay: 3.seconds, duration: 2.seconds),
                   ],
                 ),
               ),
@@ -141,29 +237,37 @@ class WelcomeScreen extends StatelessWidget {
 }
 
 class _LogoMark extends StatelessWidget {
-  const _LogoMark({required this.size});
-
-  final double size;
+  const _LogoMark();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: size,
-      height: size,
+      width: 180,
+      height: 180,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: const LinearGradient(
-          colors: [Color(0xFF7AD34F), Color(0xFF0B8D5B)],
+          colors: [EcoColors.logoGreenLight, EcoColors.logoGreenDark],
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF119F63).withValues(alpha: .22),
-            blurRadius: 28,
-            offset: const Offset(0, 16),
+            color: EcoColors.primary.withValues(alpha: 0.25),
+            blurRadius: 40,
+            offset: const Offset(0, 20),
+          ),
+          BoxShadow(
+            color: Colors.white.withValues(alpha: 0.8),
+            blurRadius: 0,
+            spreadRadius: -10,
           ),
         ],
       ),
-      child: const Icon(Icons.eco_rounded, color: Colors.white, size: 76),
-    );
+      child: const Icon(Icons.eco_rounded, size: 90, color: Colors.white),
+    ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(
+          begin: const Offset(1, 1),
+          end: const Offset(1.05, 1.05),
+          duration: 3.seconds,
+          curve: Curves.easeInOut,
+        ).shimmer(duration: 2.seconds);
   }
 }

@@ -1,1 +1,207 @@
-import 'package:flutter/material.dart'; import 'package:flutter_animate/flutter_animate.dart'; import 'package:font_awesome_flutter/font_awesome_flutter.dart'; import 'package:google_fonts/google_fonts.dart'; import 'package:smooth_page_indicator/smooth_page_indicator.dart'; import 'home_screen.dart'; class OnboardingScreen extends StatefulWidget { const OnboardingScreen({super.key}); @override State<OnboardingScreen> createState() => _OnboardingScreenState(); } class _OnboardingScreenState extends State<OnboardingScreen> { final PageController _pageController = PageController(); int _currentPage = 0; final List<_OnboardingItem> _items = const [ _OnboardingItem( title: 'Ph n loại dễ dàng', description: 'Quét camera nhận diện giấy, nhựa, kim loại và rác điện tử bằng AI trước khi tạo đơn thu gom.', icon: FontAwesomeIcons.barcode, color: Color(0xFF119F63), ), _OnboardingItem( title: 'Kết nối nhanh chóng', description: 'Radar tìm người thu gom trong bán kính gần nhất hoặc gợi ý trạm tập kết phù hợp.', icon: FontAwesomeIcons.towerBroadcast, color: Color(0xFF1F73D6), ), _OnboardingItem( title: 'Tích điểm sống xanh', description: 'Nhận tiền hoặc đổi sang Điểm Xanh để lấy voucher, nạp điện thoại và góp quỹ trồng c y.', icon: FontAwesomeIcons.leaf, color: Color(0xFF2D6A4F), ), ]; void _goHome() { Navigator.of(context).pushReplacement( MaterialPageRoute<void>(builder: (_) => const HomeScreen()), ); } @override void dispose() { _pageController.dispose(); super.dispose(); } @override Widget build(BuildContext context) { final isLastPage = _currentPage == _items.length - 1; return Scaffold( backgroundColor: const Color(0xFFF7FAF9), body: SafeArea( child: Column( children: [ Padding( padding: const EdgeInsets.fromLTRB(20, 8, 20, 0), child: Row( children: [ const _SmallBrand(), const Spacer(), TextButton( onPressed: _goHome, child: Text( 'Bỏ qua', style: GoogleFonts.inter( color: const Color(0xFF60736D), fontSize: 16, fontWeight: FontWeight.w700, ), ), ), ], ), ), Expanded( child: PageView.builder( controller: _pageController, onPageChanged: (value) => setState(() => _currentPage = value), itemCount: _items.length, itemBuilder: (context, index) { final item = _items[index]; return Padding( padding: const EdgeInsets.fromLTRB(34, 18, 34, 22), child: Column( mainAxisAlignment: MainAxisAlignment.center, children: [ _OnboardingVisual(item: item) .animate(key: ValueKey('visual_$index')) .fadeIn(duration: 600.ms) .scale( begin: const Offset(.88, .88), curve: Curves.elasticOut, duration: 1000.ms, ), const SizedBox(height: 46), Text( item.title, textAlign: TextAlign.center, style: GoogleFonts.inter( fontSize: 31, fontWeight: FontWeight.w900, color: const Color(0xFF102A24), ), ) .animate(key: ValueKey('title_$index')) .fadeIn(delay: 220.ms, duration: 520.ms), const SizedBox(height: 16), Text( item.description, textAlign: TextAlign.center, style: GoogleFonts.inter( fontSize: 16.5, color: const Color(0xFF60736D), height: 1.55, fontWeight: FontWeight.w500, ), ) .animate(key: ValueKey('desc_$index')) .fadeIn(delay: 360.ms, duration: 520.ms), ], ), ); }, ), ), Padding( padding: const EdgeInsets.fromLTRB(28, 0, 28, 34), child: Row( children: [ SmoothPageIndicator( controller: _pageController, count: _items.length, effect: const ExpandingDotsEffect( activeDotColor: Color(0xFF119F63), dotColor: Color(0xFFD7E2DE), dotHeight: 10, dotWidth: 10, expansionFactor: 4, spacing: 8, ), ), const Spacer(), FilledButton.icon( onPressed: () { if (isLastPage) { _goHome(); } else { _pageController.nextPage( duration: const Duration(milliseconds: 520), curve: Curves.easeInOutCubic, ); } }, icon: Icon( isLastPage ? Icons.check_rounded : Icons.arrow_forward_rounded, ), label: AnimatedSwitcher( duration: const Duration(milliseconds: 180), child: Text( isLastPage ? 'Bắt đầu' : 'Tiếp', key: ValueKey(isLastPage), ), ), style: FilledButton.styleFrom( backgroundColor: const Color(0xFF119F63), foregroundColor: Colors.white, minimumSize: const Size(118, 56), textStyle: GoogleFonts.inter( fontSize: 16, fontWeight: FontWeight.w900, ), shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(18), ), ), ), ], ), ), ], ), ), ); } } class _OnboardingVisual extends StatelessWidget { const _OnboardingVisual({required this.item}); final _OnboardingItem item; @override Widget build(BuildContext context) { return Container( width: 238, height: 238, decoration: BoxDecoration( shape: BoxShape.circle, gradient: LinearGradient( begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [item.color.withValues(alpha: .16), Colors.white], ), boxShadow: [ BoxShadow( color: item.color.withValues(alpha: .18), blurRadius: 34, offset: const Offset(0, 18), ), ], ), child: Stack( alignment: Alignment.center, children: [ Positioned( right: 32, top: 34, child: Icon( Icons.auto_awesome_rounded, color: item.color.withValues(alpha: .38), size: 34, ), ), Positioned( left: 30, bottom: 36, child: Icon( Icons.recycling_rounded, color: item.color.withValues(alpha: .28), size: 46, ), ), Container( width: 128, height: 128, decoration: BoxDecoration( borderRadius: BorderRadius.circular(36), gradient: LinearGradient( colors: [item.color.withValues(alpha: .78), item.color], ), boxShadow: [ BoxShadow( color: item.color.withValues(alpha: .28), blurRadius: 24, offset: const Offset(0, 14), ), ], ), child: Center( child: FaIcon(item.icon, color: Colors.white, size: 60), ), ), ], ), ); } } class _SmallBrand extends StatelessWidget { const _SmallBrand(); @override Widget build(BuildContext context) { return Row( mainAxisSize: MainAxisSize.min, children: [ Container( width: 38, height: 38, decoration: const BoxDecoration( shape: BoxShape.circle, gradient: LinearGradient( colors: [Color(0xFF7AD34F), Color(0xFF0B8D5B)], ), ), child: const Icon(Icons.eco_rounded, color: Colors.white, size: 22), ), const SizedBox(width: 10), Text( 'EcoCollect', style: GoogleFonts.inter( color: const Color(0xFF0B6B4B), fontSize: 18, fontWeight: FontWeight.w900, ), ), ], ); } } class _OnboardingItem { const _OnboardingItem({ required this.title, required this.description, required this.icon, required this.color, }); final String title; final String description; final dynamic icon; final Color color; } 
+import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import '../persistence/launch_state.dart';
+import '../theme/eco_colors.dart';
+import 'home_screen.dart';
+
+class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({super.key});
+
+  @override
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
+}
+
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  final PageController _controller = PageController();
+  int _currentPage = 0;
+
+  final List<_OnboardingItem> _items = [
+    const _OnboardingItem(
+      title: 'Phân loại thông minh',
+      description:
+          'Sử dụng AI để nhận diện và phân loại phế liệu chính xác. Tăng giá trị cho rác thải của bạn.',
+      icon: FontAwesomeIcons.recycle,
+      color: EcoColors.primary,
+    ),
+    const _OnboardingItem(
+      title: 'Gọi thu gom tức thì',
+      description:
+          'Phát tín hiệu Radar để kết nối với người thu gom gần nhất trong khu vực của bạn.',
+      icon: FontAwesomeIcons.wifi,
+      color: EcoColors.blue,
+    ),
+    const _OnboardingItem(
+      title: 'Tích lũy Điểm Xanh',
+      description:
+          'Mỗi kg rác thải được thu hồi sẽ đổi lại Điểm Xanh để nhận voucher và quà tặng hấp dẫn.',
+      icon: FontAwesomeIcons.leaf,
+      color: EcoColors.orange,
+    ),
+  ];
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _goHome() async {
+    await markOnboardingComplete();
+    if (!mounted) return;
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          PageView.builder(
+            controller: _controller,
+            onPageChanged: (index) => setState(() => _currentPage = index),
+            itemCount: _items.length,
+            itemBuilder: (context, index) =>
+                _OnboardingPage(item: _items[index]),
+          ),
+          Positioned(
+            bottom: 60,
+            left: 24,
+            right: 24,
+            child: SafeArea(
+              child: Column(
+                children: [
+                  SmoothPageIndicator(
+                    controller: _controller,
+                    count: _items.length,
+                    effect: const ExpandingDotsEffect(
+                      activeDotColor: EcoColors.primary,
+                      dotColor: EcoColors.mapPark,
+                      dotHeight: 8,
+                      dotWidth: 8,
+                      expansionFactor: 4,
+                    ),
+                  ),
+                  const SizedBox(height: 48),
+                  Row(
+                    children: [
+                      TextButton(
+                        onPressed: _goHome,
+                        child: const Text(
+                          'Bỏ qua',
+                          style: TextStyle(
+                            color: EcoColors.bodyMuted,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      _currentPage == _items.length - 1
+                          ? FilledButton(
+                              onPressed: _goHome,
+                              style: FilledButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 32,
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: const Text(
+                                'Bắt đầu',
+                                style: TextStyle(fontWeight: FontWeight.w800),
+                              ),
+                            )
+                          : FloatingActionButton(
+                              onPressed: () => _controller.nextPage(
+                                duration: 500.ms,
+                                curve: Curves.easeOutCubic,
+                              ),
+                              backgroundColor: EcoColors.primary,
+                              elevation: 2,
+                              child: const Icon(
+                                Icons.arrow_forward_rounded,
+                                color: Colors.white,
+                              ),
+                            ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OnboardingPage extends StatelessWidget {
+  const _OnboardingPage({required this.item});
+  final _OnboardingItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(40),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 200,
+            height: 200,
+            decoration: BoxDecoration(
+              color: item.color.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: FaIcon(item.icon, size: 80, color: item.color),
+            ),
+          ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
+          const SizedBox(height: 60),
+          Text(
+            item.title,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.beVietnamPro(
+              fontSize: 30,
+              fontWeight: FontWeight.w900,
+              color: EcoColors.headline,
+            ),
+          ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2),
+          const SizedBox(height: 20),
+          Text(
+            item.description,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.beVietnamPro(
+              fontSize: 16,
+              height: 1.6,
+              color: EcoColors.bodyMuted,
+              fontWeight: FontWeight.w500,
+            ),
+          ).animate().fadeIn(delay: 400.ms),
+        ],
+      ),
+    );
+  }
+}
+
+class _OnboardingItem {
+  const _OnboardingItem({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.color,
+  });
+
+  final String title;
+  final String description;
+  final dynamic icon;
+  final Color color;
+}
