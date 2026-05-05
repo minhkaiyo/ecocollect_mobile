@@ -1037,7 +1037,7 @@ class _HomeDashboard extends StatelessWidget {
   }
 }
 
-class _TopBar extends StatelessWidget {
+class _TopBar extends StatefulWidget {
   const _TopBar({
     required this.isWide,
     required this.onSearch,
@@ -1053,17 +1053,33 @@ class _TopBar extends StatelessWidget {
   final VoidCallback onPointsTap;
 
   @override
+  State<_TopBar> createState() => _TopBarState();
+}
+
+class _TopBarState extends State<_TopBar> {
+  Stream<UserProfile>? _profileStream;
+
+  @override
+  void initState() {
+    super.initState();
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      _profileStream = UserRepository().watchProfile(uid);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(isWide ? 28 : 16, 16, isWide ? 28 : 16, 10),
+      padding: EdgeInsets.fromLTRB(widget.isWide ? 28 : 16, 16, widget.isWide ? 28 : 16, 10),
       child: Row(
         children: [
-          _MiniLogo(compact: !isWide),
-          if (isWide) ...[
+          _MiniLogo(compact: !widget.isWide),
+          if (widget.isWide) ...[
             const SizedBox(width: 28),
             Expanded(
               child: TextField(
-                onSubmitted: onSearch,
+                onSubmitted: widget.onSearch,
                 decoration: InputDecoration(
                   hintText:
                       'Giá thị trường, trạm tập kết, cẩm nang phân loại',
@@ -1080,7 +1096,7 @@ class _TopBar extends StatelessWidget {
           ] else ...[
             const Spacer(),
             IconButton.filledTonal(
-              onPressed: onMobileSearchOpen,
+              onPressed: widget.onMobileSearchOpen,
               icon: const Icon(Icons.search_rounded),
               style: IconButton.styleFrom(
                 backgroundColor: EcoColors.mintBg,
@@ -1092,7 +1108,7 @@ class _TopBar extends StatelessWidget {
           Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: onNotificationsTap,
+              onTap: widget.onNotificationsTap,
               borderRadius: BorderRadius.circular(16),
               child: const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
@@ -1108,7 +1124,7 @@ class _TopBar extends StatelessWidget {
             color: EcoColors.subtleBlue,
             borderRadius: BorderRadius.circular(18),
             child: InkWell(
-              onTap: onPointsTap,
+              onTap: widget.onPointsTap,
               borderRadius: BorderRadius.circular(18),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
@@ -1116,18 +1132,17 @@ class _TopBar extends StatelessWidget {
                   children: [
                     const Icon(Icons.token_rounded, color: EcoColors.blue),
                     const SizedBox(width: 8),
-                    StreamBuilder<UserProfile>(
-                      stream: FirebaseAuth.instance.currentUser != null
-                          ? UserRepository().watchProfile(FirebaseAuth.instance.currentUser!.uid)
-                          : null,
-                      builder: (context, snapshot) {
-                        final points = snapshot.data?.greenPoints ?? 0;
-                        return Text(
-                          '$points Điểm',
-                          style: const TextStyle(fontWeight: FontWeight.w800),
-                        );
-                      },
-                    ),
+                    if (_profileStream != null)
+                      StreamBuilder<UserProfile>(
+                        stream: _profileStream,
+                        builder: (context, snapshot) {
+                          final points = snapshot.data?.greenPoints ?? 0;
+                          return Text(
+                            '$points Điểm',
+                            style: const TextStyle(fontWeight: FontWeight.w800),
+                          );
+                        },
+                      ),
                   ],
                 ),
               ),
