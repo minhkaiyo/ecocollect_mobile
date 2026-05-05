@@ -29,7 +29,16 @@ class UserRepository extends BaseRepository {
   Stream<UserProfile> watchProfile(String uid) {
     return _collection.doc(uid).snapshots().map((doc) {
       if (!doc.exists) {
-        throw Exception('User profile not found');
+        return UserProfile(
+          uid: uid,
+          displayName: 'Đang tải...',
+          phone: '',
+          address: '',
+          greenPoints: 0,
+          totalKgRecycled: 0,
+          totalOrders: 0,
+          createdAt: DateTime.now(),
+        );
       }
       return UserProfile.fromFirestore(doc);
     });

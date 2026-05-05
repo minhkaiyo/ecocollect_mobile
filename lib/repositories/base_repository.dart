@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-abstract class BaseRepository<T> {
+abstract class BaseRepository {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   
   // Các hàm tiện ích dùng chung có thể viết ở đây

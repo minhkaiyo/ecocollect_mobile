@@ -12,7 +12,8 @@ class OrderRepository extends BaseRepository {
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => EcoOrder.fromFirestore(doc))
-            .toList());
+            .toList())
+        .handleError((_) => <EcoOrder>[]); // Firestore index chưa tạo → trả list rỗng
   }
 
   Stream<EcoOrder?> watchActiveOrder(String userId) {
@@ -22,11 +23,10 @@ class OrderRepository extends BaseRepository {
         .snapshots()
         .map((snapshot) {
       if (snapshot.docs.isEmpty) return null;
-      // Trả về đơn mới nhất đang active
       final orders = snapshot.docs.map((doc) => EcoOrder.fromFirestore(doc)).toList();
       orders.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       return orders.first;
-    });
+    }).handleError((_) => null); // Firestore index chưa tạo → trả null
   }
 
   Future<void> createOrder(Map<String, dynamic> orderData) async {

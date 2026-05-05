@@ -1674,16 +1674,31 @@ class _MarketCard extends StatelessWidget {
   }
 }
 
-class _ActiveOrderBanner extends StatelessWidget {
+class _ActiveOrderBanner extends StatefulWidget {
   const _ActiveOrderBanner();
 
   @override
-  Widget build(BuildContext context) {
+  State<_ActiveOrderBanner> createState() => _ActiveOrderBannerState();
+}
+
+class _ActiveOrderBannerState extends State<_ActiveOrderBanner> {
+  Stream<EcoOrder?>? _orderStream;
+
+  @override
+  void initState() {
+    super.initState();
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return const SizedBox();
+    if (uid != null) {
+      _orderStream = OrderRepository().watchActiveOrder(uid);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_orderStream == null) return const SizedBox();
 
     return StreamBuilder<EcoOrder?>(
-      stream: OrderRepository().watchActiveOrder(uid),
+      stream: _orderStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data == null) {
           return const SizedBox();
@@ -2747,19 +2762,34 @@ class _OrderSheetState extends State<_OrderSheet> {
   }
 }
 
-class _HistoryPage extends StatelessWidget {
+class _HistoryPage extends StatefulWidget {
   const _HistoryPage({required this.wasteTypes, required this.onRowTap});
 
   final List<WasteType> wasteTypes;
   final void Function(String date, WasteType type, String weight, String points) onRowTap;
 
   @override
-  Widget build(BuildContext context) {
+  State<_HistoryPage> createState() => _HistoryPageState();
+}
+
+class _HistoryPageState extends State<_HistoryPage> {
+  Stream<List<EcoOrder>>? _ordersStream;
+
+  @override
+  void initState() {
+    super.initState();
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return const SizedBox();
+    if (uid != null) {
+      _ordersStream = OrderRepository().watchUserOrders(uid);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_ordersStream == null) return const SizedBox();
 
     return StreamBuilder<List<EcoOrder>>(
-      stream: OrderRepository().watchUserOrders(uid),
+      stream: _ordersStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -2786,15 +2816,15 @@ class _HistoryPage extends StatelessWidget {
           title: 'Sao kê rác thải',
           child: Column(
             children: orders.map((order) {
-              final wType = wasteTypes.firstWhere(
+              final wType = widget.wasteTypes.firstWhere(
                 (w) => w.name == order.wasteType,
-                orElse: () => wasteTypes[0],
+                orElse: () => widget.wasteTypes[0],
               );
               final dateStr = '${order.createdAt.day.toString().padLeft(2, '0')}/${order.createdAt.month.toString().padLeft(2, '0')}/${order.createdAt.year}';
               
               return _TappablePanel(
                 margin: const EdgeInsets.only(bottom: 12),
-                onTap: () => onRowTap(
+                onTap: () => widget.onRowTap(
                   dateStr,
                   wType,
                   '${order.weight} kg',
@@ -3023,17 +3053,32 @@ class _HeatmapPanel extends StatelessWidget {
   }
 }
 
-class _WalletPage extends StatelessWidget {
+class _WalletPage extends StatefulWidget {
   const _WalletPage({required this.onBalanceTap});
   final VoidCallback onBalanceTap;
 
   @override
-  Widget build(BuildContext context) {
+  State<_WalletPage> createState() => _WalletPageState();
+}
+
+class _WalletPageState extends State<_WalletPage> {
+  Stream<UserProfile>? _profileStream;
+
+  @override
+  void initState() {
+    super.initState();
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return const SizedBox();
+    if (uid != null) {
+      _profileStream = UserRepository().watchProfile(uid);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_profileStream == null) return const SizedBox();
 
     return StreamBuilder<UserProfile>(
-      stream: UserRepository().watchProfile(uid),
+      stream: _profileStream,
       builder: (context, snapshot) {
         final points = snapshot.data?.greenPoints ?? 0;
 
@@ -3045,7 +3090,7 @@ class _WalletPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24),
                 clipBehavior: Clip.antiAlias,
                 child: InkWell(
-                  onTap: onBalanceTap,
+                  onTap: widget.onBalanceTap,
                   child: Ink(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
@@ -3098,41 +3143,56 @@ class _WalletPage extends StatelessWidget {
                   ),
                 ),
               ),
-          const SizedBox(height: 14),
-          const _RewardTile(
-            icon: Icons.local_cafe_rounded,
-            title: 'Voucher cafe',
-            points: '80 điểm',
+              const SizedBox(height: 14),
+              const _RewardTile(
+                icon: Icons.local_cafe_rounded,
+                title: 'Voucher cafe',
+                points: '80 điểm',
+              ),
+              const _RewardTile(
+                icon: Icons.phone_android_rounded,
+                title: 'Nạp điện thoại',
+                points: '120 điểm',
+              ),
+              const _RewardTile(
+                icon: Icons.forest_rounded,
+                title: 'Góp quỹ trồng cây',
+                points: '50 điểm',
+              ),
+            ],
           ),
-          const _RewardTile(
-            icon: Icons.phone_android_rounded,
-            title: 'Nạp điện thoại',
-            points: '120 điểm',
-          ),
-          const _RewardTile(
-            icon: Icons.forest_rounded,
-            title: 'Góp quỹ trồng cây',
-            points: '50 điểm',
-          ),
-        ],
-      ),
-    );
+        );
       },
     );
   }
 }
 
-class _ProfilePage extends StatelessWidget {
+class _ProfilePage extends StatefulWidget {
   const _ProfilePage({required this.onFieldTap});
   final ValueChanged<int> onFieldTap;
 
   @override
-  Widget build(BuildContext context) {
+  State<_ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<_ProfilePage> {
+  Stream<UserProfile>? _profileStream;
+
+  @override
+  void initState() {
+    super.initState();
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return const SizedBox();
+    if (uid != null) {
+      _profileStream = UserRepository().watchProfile(uid);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_profileStream == null) return const SizedBox();
 
     return StreamBuilder<UserProfile>(
-      stream: UserRepository().watchProfile(uid),
+      stream: _profileStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -3151,25 +3211,25 @@ class _ProfilePage extends StatelessWidget {
                 index: 0,
                 icon: Icons.person_rounded,
                 text: profile.displayName,
-                onTap: onFieldTap,
+                onTap: widget.onFieldTap,
               ),
               _ProfileField(
                 index: 1,
                 icon: Icons.phone_rounded,
                 text: profile.phone,
-                onTap: onFieldTap,
+                onTap: widget.onFieldTap,
               ),
               _ProfileField(
                 index: 2,
                 icon: Icons.location_on_rounded,
                 text: profile.address,
-                onTap: onFieldTap,
+                onTap: widget.onFieldTap,
               ),
               _ProfileField(
                 index: 3,
                 icon: Icons.verified_user_rounded,
                 text: 'UID: ${profile.uid.substring(0, 8)}...',
-                onTap: onFieldTap,
+                onTap: widget.onFieldTap,
               ),
               const SizedBox(height: 24),
               SizedBox(
