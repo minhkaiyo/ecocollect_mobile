@@ -123,7 +123,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: EcoColors.primary.withValues(alpha: 0.25),
+                          color: EcoColors.primary.withOpacity(0.25),
                           blurRadius: 30,
                           offset: const Offset(0, 10),
                         ),
@@ -227,7 +227,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       borderRadius: BorderRadius.circular(28),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.04),
+                          color: Colors.black.withOpacity(0.04),
                           blurRadius: 24,
                           offset: const Offset(0, 8),
                         ),

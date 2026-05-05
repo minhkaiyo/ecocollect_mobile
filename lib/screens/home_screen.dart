@@ -1110,12 +1110,12 @@ class _TopBar extends StatelessWidget {
             child: InkWell(
               onTap: onPointsTap,
               borderRadius: BorderRadius.circular(18),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
                 child: Row(
                   children: [
-                    Icon(Icons.token_rounded, color: EcoColors.blue),
-                    SizedBox(width: 8),
+                    const Icon(Icons.token_rounded, color: EcoColors.blue),
+                    const SizedBox(width: 8),
                     StreamBuilder<UserProfile>(
                       stream: FirebaseAuth.instance.currentUser != null
                           ? UserRepository().watchProfile(FirebaseAuth.instance.currentUser!.uid)
@@ -1503,8 +1503,8 @@ class _RadarMapState extends State<_RadarMap> {
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               color: EcoColors.primary
-                                                  .withValues(
-                                                    alpha: 0.2 * (1 - value),
+                                                  .withOpacity(
+                                                    0.2 * (1 - value),
                                                   ),
                                             ),
                                           ),
@@ -1524,8 +1524,8 @@ class _RadarMapState extends State<_RadarMap> {
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withValues(
-                                              alpha: 0.2,
+                                            color: Colors.black.withOpacity(
+                                              0.2,
                                             ),
                                             blurRadius: 6,
                                             offset: const Offset(0, 3),
@@ -1579,7 +1579,7 @@ class _CollectorPinLive extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: .12),
+            color: Colors.black.withOpacity(.12),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -1743,7 +1743,7 @@ class _ActiveOrderBanner extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: EcoColors.primary.withValues(alpha: .18),
+                    color: EcoColors.primary.withOpacity(0.18),
                     blurRadius: 24,
                     offset: const Offset(0, 14),
                   ),
@@ -1835,7 +1835,7 @@ class _LivePulse extends StatelessWidget {
                 height: 52 * value,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: .18 * (1 - value)),
+                  color: Colors.white.withOpacity(.18 * (1 - value)),
                 ),
               );
             },
@@ -2032,7 +2032,7 @@ class _PaperBankCard extends StatelessWidget {
                   child: Icon(
                     Icons.library_books_rounded,
                     size: 92,
-                    color: Colors.white.withValues(alpha: .34),
+                    color: Colors.white.withOpacity(.34),
                   ),
                 ),
                 Column(
@@ -2057,7 +2057,7 @@ class _PaperBankCard extends StatelessWidget {
                       child: LinearProgressIndicator(
                         value: (progress / 50).clamp(0, 1),
                         minHeight: 12,
-                        backgroundColor: Colors.white.withValues(alpha: .55),
+                        backgroundColor: Colors.white.withOpacity(.55),
                         color: EcoColors.warmYellow,
                       ),
                     ),
@@ -2438,7 +2438,7 @@ class _CollectorMatchCard extends StatelessWidget {
                             shape: BoxShape.circle,
                             gradient: LinearGradient(
                               colors: [
-                                collector.$4.withValues(alpha: .78),
+                                collector.$4.withOpacity(.78),
                                 collector.$4,
                               ],
                             ),
@@ -3572,7 +3572,7 @@ class _ScanBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: .12),
+        color: color.withOpacity(.12),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color),
       ),
@@ -3661,7 +3661,7 @@ class _TappablePanel extends StatelessWidget {
               border: Border.all(color: EcoColors.border),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: .06),
+                  color: Colors.black.withOpacity(.06),
                   blurRadius: 14,
                   offset: const Offset(0, 8),
                 ),
@@ -3697,7 +3697,7 @@ class _Panel extends StatelessWidget {
         border: Border.all(color: EcoColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: .05),
+            color: Colors.black.withOpacity(.05),
             blurRadius: 18,
             offset: const Offset(0, 10),
           ),
@@ -3750,7 +3750,7 @@ class _IconTile extends StatelessWidget {
       width: 46,
       height: 46,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: .12),
+        color: color.withOpacity(.12),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Icon(icon, color: color),
@@ -3861,7 +3861,7 @@ class _MapPill extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: .12),
+            color: Colors.black.withOpacity(.12),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),

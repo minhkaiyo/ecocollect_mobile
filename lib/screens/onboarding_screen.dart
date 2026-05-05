@@ -158,7 +158,7 @@ class _OnboardingPage extends StatelessWidget {
             width: 200,
             height: 200,
             decoration: BoxDecoration(
-              color: item.color.withValues(alpha: 0.1),
+              color: item.color.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Center(

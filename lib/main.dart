@@ -79,7 +79,7 @@ class _EcoCollectAppState extends State<EcoCollectApp> {
                 borderRadius: BorderRadius.circular(40),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.15),
+                    color: Colors.black.withOpacity(0.15),
                     blurRadius: 30,
                     offset: const Offset(0, 10),
                   ),
@@ -213,7 +213,7 @@ class WelcomeScreen extends StatelessWidget {
                         foregroundColor: Colors.white,
                         minimumSize: const Size.fromHeight(62),
                         elevation: 4,
-                        shadowColor: EcoColors.primary.withValues(alpha: 0.4),
+                        shadowColor: EcoColors.primary.withOpacity(0.4),
                         textStyle: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
@@ -251,12 +251,12 @@ class _LogoMark extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: EcoColors.primary.withValues(alpha: 0.25),
+            color: EcoColors.primary.withOpacity(0.25),
             blurRadius: 40,
             offset: const Offset(0, 20),
           ),
           BoxShadow(
-            color: Colors.white.withValues(alpha: 0.8),
+            color: Colors.white.withOpacity(0.8),
             blurRadius: 0,
             spreadRadius: -10,
           ),
