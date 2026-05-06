@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/order.dart';
 import 'base_repository.dart';
@@ -6,18 +8,21 @@ class OrderRepository extends BaseRepository {
   final CollectionReference _collection = FirebaseFirestore.instance.collection('orders');
 
   Stream<List<EcoOrder>> watchUserOrders(String userId) {
-    return _collection
+    final stream = _collection
         .where('userId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => EcoOrder.fromFirestore(doc))
-            .toList())
-        .handleError((_) => <EcoOrder>[]); // Firestore index chưa tạo → trả list rỗng
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => EcoOrder.fromFirestore(doc)).toList());
+    return stream.transform(
+      StreamTransformer<List<EcoOrder>, List<EcoOrder>>.fromHandlers(
+        handleError: (error, stackTrace, sink) => sink.add(const []),
+      ),
+    );
   }
 
   Stream<EcoOrder?> watchActiveOrder(String userId) {
-    return _collection
+    final stream = _collection
         .where('userId', isEqualTo: userId)
         .where('status', whereIn: ['pending', 'accepted', 'collecting'])
         .snapshots()
@@ -26,7 +31,12 @@ class OrderRepository extends BaseRepository {
       final orders = snapshot.docs.map((doc) => EcoOrder.fromFirestore(doc)).toList();
       orders.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       return orders.first;
-    }).handleError((_) => null); // Firestore index chưa tạo → trả null
+    });
+    return stream.transform(
+      StreamTransformer<EcoOrder?, EcoOrder?>.fromHandlers(
+        handleError: (error, stackTrace, sink) => sink.add(null),
+      ),
+    );
   }
 
   Future<void> createOrder(Map<String, dynamic> orderData) async {
@@ -47,5 +57,25 @@ class OrderRepository extends BaseRepository {
 
   Future<void> cancelOrder(String orderId) async {
     await _collection.doc(orderId).update({'status': 'cancelled'});
+  }
+
+  Stream<List<EcoOrder>> watchPendingOrders() {
+    return _collection
+        .where('status', isEqualTo: 'pending')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map(EcoOrder.fromFirestore).toList());
+  }
+
+  Future<void> acceptOrder({
+    required String orderId,
+    required String collectorId,
+    required String collectorName,
+  }) async {
+    await _collection.doc(orderId).update({
+      'status': 'accepted',
+      'collectorId': collectorId,
+      'collectorName': collectorName,
+      'acceptedAt': FieldValue.serverTimestamp(),
+    });
   }
 }

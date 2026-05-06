@@ -17,10 +17,12 @@ abstract final class EcoColors {
   static const Color orange = Color(0xFFE78B25);
 
   static const Color headline = Color(0xFF102A24);
+  static const Color textBody = Color(0xFF2C3E38);
   static const Color bodyMuted = Color(0xFF60736D);
   static const Color bodySecondary = Color(0xFF52645F);
   static const Color chipText = Color(0xFF20322D);
   static const Color onMint = Color(0xFF31524A);
+  static const Color background = Color(0xFFFFFFFF);
   static const Color navInactive = Color(0xFF7B8783);
   static const Color iconMuted = Color(0xFF9AA8A3);
 

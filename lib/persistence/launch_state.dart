@@ -3,7 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 const _kOnboardingComplete = 'onboarding_complete';
 
 Future<bool> isOnboardingComplete() async {
-  return false; // Force show onboarding for demo
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool(_kOnboardingComplete) ?? false;
 }
 
 Future<void> markOnboardingComplete() async {

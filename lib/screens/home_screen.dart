@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../repositories/pickup_location_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart' hide Path;
@@ -9,6 +11,16 @@ import '../models/waste_type.dart';
 import '../theme/eco_colors.dart';
 import '../ui/app_feedback.dart';
 import '../repositories/order_repository.dart';
+import '../models/pickup_location.dart';
+import '../repositories/geocoding_repository.dart';
+
+import '../repositories/stats_repository.dart';
+import '../repositories/paper_bank_repository.dart';
+import '../repositories/market_price_repository.dart';
+import '../repositories/collector_repository.dart';
+import 'search_collector_sheet.dart';
+import 'create_voucher_sheet.dart';
+
 import '../repositories/user_repository.dart';
 import '../models/user_profile.dart';
 import '../models/order.dart';
@@ -29,48 +41,31 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _hasActiveOrder = false;
   final _orderRepo = OrderRepository();
 
-  final List<WasteType> _wasteTypes = const [
-    WasteType(
-      'Giấy',
-      '4.500 - 6.000',
-      5200,
-      Icons.article_rounded,
-      EcoColors.primary,
-      'Ép phẳng, buộc gọn',
-    ),
-    WasteType(
-      'Nhựa',
-      '7.000 - 9.500',
-      8200,
-      Icons.water_drop_rounded,
-      EcoColors.blue,
-      'LĂ m sạch, tháo nhãn',
-    ),
-    WasteType(
-      'Kim loại',
-      '12.000 - 15.000',
-      13500,
-      Icons.view_in_ar_rounded,
-      EcoColors.steel,
-      'Tách theo nhóm kim loại',
-    ),
-    WasteType(
-      'Điện tử',
-      'Theo món',
-      25000,
-      Icons.memory_rounded,
-      EcoColors.purple,
-      'Bảo quản nguyên khối',
-    ),
-    WasteType(
-      'Cồng kềnh',
-      'Hẹn giá',
-      0,
-      Icons.chair_rounded,
-      EcoColors.orange,
-      'Chụp ảnh trước khi gửi',
-    ),
-  ];
+  final _statsRepo = StatsRepository();
+  final _marketPriceRepo = MarketPriceRepository();
+  final _paperBankRepo = PaperBankRepository();
+  final _collectorRepo = CollectorRepository();
+  LatLng? _currentLocation;
+
+
+  List<WasteType> _wasteTypes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _marketPriceRepo.watchPrices().listen((list) {
+      if (mounted) setState(() => _wasteTypes = list);
+    });
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      final pos = await Geolocator.getCurrentPosition();
+      if (mounted) setState(() => _currentLocation = LatLng(pos.latitude, pos.longitude));
+    } catch (_) {}
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -499,50 +494,62 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _openCollectorInvite(int index) {
-    const names = ['Cô Lan', 'Chú Hùng', 'Anh Nam'];
-    final i = index.clamp(0, names.length - 1);
-    _showToast(
-      'Đã gửi lời mời ghép đơn tới ${names[i]} (demo). Họ sẽ phản hồi trong vài phút.',
-      icon: Icons.send_rounded,
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => SearchCollectorSheet(
+        currentUid: FirebaseAuth.instance.currentUser?.uid ?? '',
+        currentLocation: _currentLocation,
+      ),
     );
   }
 
-  Future<void> _openImpactDetail(int index) {
-    const copy = [
+  Future<void> _openImpactDetail(int index) async {
+    final snap = await FirebaseFirestore.instance.collection('app_stats').doc('global').get();
+    final data = snap.data() ?? {};
+    final kg = (data['totalKgRecycled'] as num?)?.toDouble() ?? 0.0;
+    final buyers = data['totalRegisteredBuyers'] ?? 0;
+    final stations = data['totalRecyclingStations'] ?? 0;
+    final trees = (kg * 0.03).toInt();
+
+    final copy = [
       (
         'Đã thu hồi',
-        '1.284 kg phế liệu được đưa vào tái chế có chứng từ trong hệ thống demo.',
+        '${kg.toStringAsFixed(1)} kg phế liệu đã được đưa vào hệ thống tái chế chuẩn hóa.',
       ),
       (
         'Người thu gom',
-        '46 đối tác đang hoạt động tại khu vực Hà Nội (dữ liệu minh họa).',
+        '$buyers đối tác đang hoạt động trên hệ thống.',
       ),
       (
         'Trạm tái chế',
-        '12 trạm liên thông — bạn có thể tự mang hoặc gọi thu gom tận nơi.',
+        '$stations trạm liên thông — bạn có thể tự mang hoặc gọi thu gom tận nơi.',
       ),
       (
         'Quỹ xanh',
-        '38 cây tương đương lượng CO₂ được giảm nhờ phân loại đúng (ước tính demo).',
+        '$trees cây xanh tương đương lượng CO₂ giảm thải nhờ phân loại đúng.',
       ),
     ];
     final i = index.clamp(0, copy.length - 1);
     final item = copy[i];
-    return showEcoInfoSheet(
-      context,
-      title: item.$1,
-      icon: Icons.eco_rounded,
-      body: [
-        Text(
-          item.$2,
-          style: const TextStyle(
-            color: EcoColors.bodyMuted,
-            height: 1.45,
-            fontWeight: FontWeight.w600,
+    if (mounted) {
+      showEcoInfoSheet(
+        context,
+        title: item.$1,
+        icon: Icons.eco_rounded,
+        body: [
+          Text(
+            item.$2,
+            style: const TextStyle(
+              color: EcoColors.bodyMuted,
+              height: 1.45,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    }
   }
 
   void _openOrderTracking() {
@@ -1007,7 +1014,7 @@ class _HomeDashboard extends StatelessWidget {
                   const SizedBox(height: 18),
                   _QuickActionsBar(onAction: onQuickAction),
                   const SizedBox(height: 18),
-                  _ImpactStrip(onItemTap: onImpactStatTap),
+                  _ImpactStrip(onTap: onImpactStatTap),
                   const SizedBox(height: 18),
                   _PaperBankCard(progress: weight, onTap: onPaperBankTap),
                   const SizedBox(height: 16),
@@ -1020,7 +1027,7 @@ class _HomeDashboard extends StatelessWidget {
                   const SizedBox(height: 16),
                   _SortingGuideCard(onRowTap: onSortingGuideTap),
                   const SizedBox(height: 16),
-                  _StationFinderCard(onRowTap: onStationCardTap),
+                  _StationFinderCard(onTap: onStationCardTap),
                   const SizedBox(height: 16),
                   _EcoReportCard(onCardTap: onEcoReportTap),
                   const SizedBox(height: 16),
@@ -1886,73 +1893,105 @@ class _LivePulse extends StatelessWidget {
 }
 
 class _ImpactStrip extends StatelessWidget {
-  const _ImpactStrip({required this.onItemTap});
-
-  final ValueChanged<int> onItemTap;
+  const _ImpactStrip({required this.onTap});
+  final ValueChanged<int> onTap;
 
   @override
   Widget build(BuildContext context) {
-    const items = [
-      (Icons.recycling_rounded, '1.284 kg', 'đã thu hồi'),
-      (Icons.groups_rounded, '46', 'người thu gom'),
-      (Icons.storefront_rounded, '12', 'trạm tái chế'),
-      (Icons.forest_rounded, '38 cây', 'quỹ xanh'),
-    ];
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final compact = constraints.maxWidth < 760;
-        return Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: List.generate(items.length, (index) {
-            final item = items[index];
-            return SizedBox(
-              width: compact
-                  ? (constraints.maxWidth - 12) / 2
-                  : (constraints.maxWidth - 36) / 4,
-              child: _TappablePanel(
-                onTap: () => onItemTap(index),
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    _IconTile(icon: item.$1, color: EcoColors.primary),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.$2,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          Text(
-                            item.$3,
-                            style: const TextStyle(
-                              color: EcoColors.bodyMuted,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Icon(
-                      Icons.chevron_right_rounded,
-                      color: EcoColors.iconMuted,
-                      size: 20,
-                    ),
-                  ],
-                ),
+    return StreamBuilder<Map<String, dynamic>>(
+      stream: StatsRepository().watchGlobalStats(),
+      builder: (context, snapshot) {
+        final data = snapshot.data ?? {};
+        final kg = (data['totalKgRecycled'] as num?)?.toDouble() ?? 0.0;
+        final buyers = data['totalRegisteredBuyers'] ?? 0;
+        final stations = data['totalRecyclingStations'] ?? 0;
+        final trees = (kg * 0.03).toInt();
+
+        return Row(
+          children: [
+            Expanded(
+              child: _ImpactCard(
+                icon: Icons.recycling_rounded,
+                value: '${kg.toStringAsFixed(0)}kg',
+                label: 'Đã thu hồi',
+                color: EcoColors.primary,
+                onTap: () => onTap(0),
               ),
-            );
-          }),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _ImpactCard(
+                icon: Icons.people_alt_rounded,
+                value: '$buyers',
+                label: 'Người thu gom',
+                color: EcoColors.blue,
+                onTap: () => onTap(1),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _ImpactCard(
+                icon: Icons.store_rounded,
+                value: '$stations',
+                label: 'Trạm tái chế',
+                color: EcoColors.orange,
+                onTap: () => onTap(2),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _ImpactCard(
+                icon: Icons.park_rounded,
+                value: '$trees',
+                label: 'Quỹ xanh',
+                color: EcoColors.primary,
+                onTap: () => onTap(3),
+              ),
+            ),
+          ],
         );
-      },
+      }
     );
   }
 }
+
+class _ImpactCard extends StatelessWidget {
+  const _ImpactCard({required this.icon, required this.value, required this.label, required this.color, required this.onTap});
+  final IconData icon;
+  final String value;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withOpacity(0.2)),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: color, size: 28),
+              const SizedBox(height: 8),
+              Text(value, style: TextStyle(color: color, fontWeight: FontWeight.w900, fontSize: 16)),
+              const SizedBox(height: 4),
+              Text(label, style: const TextStyle(color: EcoColors.bodyMuted, fontSize: 11, fontWeight: FontWeight.w600)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 class _QuickActionsBar extends StatelessWidget {
   const _QuickActionsBar({required this.onAction});
@@ -2239,91 +2278,79 @@ class _SortingGuideCard extends StatelessWidget {
 }
 
 class _StationFinderCard extends StatelessWidget {
-  const _StationFinderCard({required this.onRowTap});
-
-  final ValueChanged<int> onRowTap;
+  const _StationFinderCard({required this.onTap});
+  final ValueChanged<int> onTap;
 
   @override
   Widget build(BuildContext context) {
-    const stations = [
-      ('Trạm Cầu Giấy', '1.8km', 'Nhận giấy, nhựa, kim loại'),
-      (
-        'Kho Xanh Đống Đa',
-        '2.4km',
-        'Có cân điện tử, nhận cồng kềnh',
-      ),
-      (
-        'Hub Tái Chế Bách Khoa',
-        '3.1km',
-        'Nhận pin và linh kiện điện tử',
-      ),
-    ];
-    return _Panel(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const _SectionHeader(title: 'Điểm tập kết gần bạn'),
-          const SizedBox(height: 12),
-          ...List.generate(stations.length, (index) {
-            final station = stations[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () => onRowTap(index),
-                  borderRadius: BorderRadius.circular(14),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Row(
-                      children: [
-                        const _IconTile(
-                          icon: Icons.storefront_rounded,
-                          color: EcoColors.blue,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                station.$1,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                              Text(
-                                station.$3,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: EcoColors.bodyMuted,
-                                ),
-                              ),
-                            ],
+    return FutureBuilder<List<PickupLocation>>(
+      future: Geolocator.getCurrentPosition().then((pos) => 
+          PickupLocationRepository().findNearestN(LatLng(pos.latitude, pos.longitude), count: 3)
+      ).catchError((_) => <PickupLocation>[]),
+      builder: (context, snapshot) {
+        final stations = snapshot.data ?? [];
+        if (stations.isEmpty) {
+          return const _Panel(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _SectionHeader(title: 'Trạm tái chế gần nhất'),
+                SizedBox(height: 12),
+                Text('Chưa tìm thấy trạm tái chế nào gần bạn.', style: TextStyle(color: EcoColors.bodyMuted)),
+              ],
+            ),
+          );
+        }
+
+        return _Panel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _SectionHeader(title: 'Trạm tái chế gần nhất'),
+              const SizedBox(height: 12),
+              ...List.generate(stations.length, (index) {
+                final s = stations[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => onTap(index), // Pass index or station id later
+                      borderRadius: BorderRadius.circular(16),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 64,
+                            height: 64,
+                            decoration: BoxDecoration(
+                              color: EcoColors.mintBg,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: const Icon(Icons.recycling_rounded, color: EcoColors.primary, size: 28),
                           ),
-                        ),
-                        Text(
-                          station.$2,
-                          style: const TextStyle(
-                            color: EcoColors.blue,
-                            fontWeight: FontWeight.w900,
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(s.label, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+                                const SizedBox(height: 4),
+                                Text(s.address, style: const TextStyle(color: EcoColors.bodyMuted, fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
+                              ],
+                            ),
                           ),
-                        ),
-                        const Icon(
-                          Icons.chevron_right_rounded,
-                          color: EcoColors.iconMuted,
-                          size: 20,
-                        ),
-                      ],
+                          const SizedBox(width: 8),
+                          const Icon(Icons.chevron_right_rounded, color: EcoColors.iconMuted),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            );
-          }),
-        ],
-      ),
+                );
+              }),
+            ],
+          ),
+        );
+      }
     );
   }
 }
@@ -2429,117 +2456,75 @@ class _EcoReportCard extends StatelessWidget {
 
 class _CollectorMatchCard extends StatelessWidget {
   const _CollectorMatchCard({required this.onRowTap});
-
   final ValueChanged<int> onRowTap;
 
   @override
   Widget build(BuildContext context) {
-    const collectors = [
-      ('Cô Lan', '4.9', '300m', EcoColors.primary),
-      ('Chú Hùng', '4.8', '1.2km', EcoColors.blue),
-      ('Anh Nam', '4.7', '1.8km', EcoColors.orange),
-    ];
-    return _Panel(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const _SectionHeader(
-            title: 'Người thu gom phù hợp',
-            live: true,
-          ),
-          const SizedBox(height: 12),
-          ...List.generate(collectors.length, (index) {
-            final collector = collectors[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () => onRowTap(index),
-                  borderRadius: BorderRadius.circular(16),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: [
-                                collector.$4.withOpacity(.78),
-                                collector.$4,
-                              ],
+    return FutureBuilder<List<UserProfile>>(
+      future: Geolocator.getCurrentPosition().then((pos) => 
+          CollectorRepository().findNearby(LatLng(pos.latitude, pos.longitude), radiusKm: 10.0)
+      ).catchError((_) => <UserProfile>[]),
+      builder: (context, snapshot) {
+        final collectors = snapshot.data ?? [];
+        if (collectors.isEmpty) return const SizedBox.shrink();
+
+        return _Panel(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _SectionHeader(title: 'Người thu gom phù hợp', live: true),
+              const SizedBox(height: 12),
+              ...List.generate(collectors.take(3).length, (index) {
+                final collector = collectors[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => onRowTap(index),
+                      borderRadius: BorderRadius.circular(16),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 24,
+                              backgroundColor: EcoColors.mintBg,
+                              backgroundImage: collector.photoUrl != null ? NetworkImage(collector.photoUrl!) : null,
+                              child: collector.photoUrl == null ? const Icon(Icons.person_rounded, color: EcoColors.primary) : null,
                             ),
-                          ),
-                          child: const Icon(
-                            Icons.person_rounded,
-                            color: Colors.white,
-                            size: 28,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                collector.$1,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                              Row(
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Icon(
-                                    Icons.star_rounded,
-                                    size: 16,
-                                    color: EcoColors.warmYellow,
-                                  ),
-                                  Text(
-                                    ' ${collector.$2} - ${collector.$3}',
-                                    style: const TextStyle(
-                                      color: EcoColors.bodyMuted,
-                                    ),
+                                  Text(collector.displayName, style: const TextStyle(fontWeight: FontWeight.w900)),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.star_rounded, size: 16, color: EcoColors.warmYellow),
+                                      Text(' 4.9 - ${collector.totalOrders ?? 0} chuyến', style: const TextStyle(color: EcoColors.bodyMuted)),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 7,
-                          ),
-                          decoration: BoxDecoration(
-                            color: EcoColors.mintBg,
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          child: const Text(
-                            'Sẵn sàng',
-                            style: TextStyle(
-                              color: EcoColors.primary,
-                              fontWeight: FontWeight.w900,
-                              fontSize: 12,
                             ),
-                          ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                              decoration: BoxDecoration(color: EcoColors.mintBg, borderRadius: BorderRadius.circular(999)),
+                              child: const Text('Sẵn sàng', style: TextStyle(color: EcoColors.primary, fontWeight: FontWeight.w900, fontSize: 12)),
+                            ),
+                            const Icon(Icons.chevron_right_rounded, color: EcoColors.iconMuted, size: 20),
+                          ],
                         ),
-                        const Icon(
-                          Icons.chevron_right_rounded,
-                          color: EcoColors.iconMuted,
-                          size: 20,
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            );
-          }),
-        ],
-      ),
+                );
+              }),
+            ],
+          ),
+        );
+      }
     );
   }
 }
@@ -3950,6 +3935,52 @@ class _MapPill extends StatelessWidget {
           Text(text, style: const TextStyle(fontWeight: FontWeight.w900)),
         ],
       ),
+    );
+  }
+}
+
+class _CollectorTile extends StatelessWidget {
+  final UserProfile collector;
+  const _CollectorTile({required this.collector});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: CircleAvatar(
+        backgroundColor: EcoColors.mintBg,
+        backgroundImage: collector.photoUrl != null ? NetworkImage(collector.photoUrl!) : null,
+        child: collector.photoUrl == null ? const Icon(Icons.person_rounded, color: EcoColors.primary) : null,
+      ),
+      title: Text(collector.displayName, style: const TextStyle(fontWeight: FontWeight.bold)),
+      subtitle: Text('4.9 - ${collector.totalOrders} chuyến'),
+      trailing: const Icon(Icons.chevron_right_rounded, color: EcoColors.iconMuted),
+      onTap: () {
+        // Mở detail hoặc chat
+      },
+    );
+  }
+}
+
+class _PickupLocationListTile extends StatelessWidget {
+  final PickupLocation location;
+  const _PickupLocationListTile({required this.location});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(color: EcoColors.subtleBlue, borderRadius: BorderRadius.circular(8)),
+        child: const Icon(Icons.location_on_rounded, color: EcoColors.blue, size: 20),
+      ),
+      title: Text(location.label, style: const TextStyle(fontWeight: FontWeight.bold)),
+      subtitle: Text(location.address, maxLines: 1, overflow: TextOverflow.ellipsis),
+      trailing: const Icon(Icons.chevron_right_rounded, color: EcoColors.iconMuted),
+      onTap: () {
+        // Mở bản đồ
+      },
     );
   }
 }

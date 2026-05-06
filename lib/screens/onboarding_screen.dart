@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../persistence/launch_state.dart';
 import '../theme/eco_colors.dart';
+import 'auth_screen.dart';
 import 'home_screen.dart';
+
+@visibleForTesting
+Widget nextScreenAfterOnboarding(bool isSignedIn) {
+  return isSignedIn ? const HomeScreen() : const AuthScreen();
+}
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -52,8 +60,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _goHome() async {
     await markOnboardingComplete();
     if (!mounted) return;
+    final nextScreen = nextScreenAfterOnboarding(
+      FirebaseAuth.instance.currentUser != null,
+    );
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: (_) => const HomeScreen()),
+      MaterialPageRoute<void>(builder: (_) => nextScreen),
     );
   }
 

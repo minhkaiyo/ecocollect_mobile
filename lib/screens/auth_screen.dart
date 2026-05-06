@@ -1,8 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart';
 
+import '../repositories/user_repository.dart';
+import 'home_screen.dart';
 import '../theme/eco_colors.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -13,6 +19,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  final _userRepository = UserRepository();
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -21,6 +28,13 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLoading = false;
   bool _isGoogleLoading = false;
   bool _obscurePassword = true;
+  late final Future<void> _redirectFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _redirectFuture = _applyRedirectResult();
+  }
 
   @override
   void dispose() {
@@ -48,6 +62,18 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
+  void _showSuccess(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: const TextStyle(fontWeight: FontWeight.w600)),
+        backgroundColor: EcoColors.success,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
   Future<void> _submitAuth() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
@@ -58,11 +84,13 @@ class _AuthScreenState extends State<AuthScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
+        _showSuccess('Đăng nhập thành công. Đang chuyển vào trang chính...');
       } else {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
+        _showSuccess('Đăng ký thành công. Đang đăng nhập...');
       }
     } on FirebaseAuthException catch (e) {
       String message = 'Đã có lỗi xảy ra. Vui lòng thử lại.';
@@ -84,10 +112,39 @@ class _AuthScreenState extends State<AuthScreen> {
   Future<void> _signInWithGoogle() async {
     setState(() => _isGoogleLoading = true);
     try {
-      final provider = GoogleAuthProvider();
-      provider.addScope('email');
-      provider.addScope('profile');
-      await FirebaseAuth.instance.signInWithPopup(provider);
+      if (kIsWeb) {
+        final provider = GoogleAuthProvider();
+        provider.addScope('email');
+        provider.addScope('profile');
+        try {
+          await FirebaseAuth.instance.signInWithPopup(provider);
+          _showSuccess('Đăng nhập Google thành công. Đang chuyển vào trang chính...');
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'popup-blocked' ||
+              e.code == 'operation-not-supported-in-this-environment') {
+            await FirebaseAuth.instance.signInWithRedirect(provider);
+            _showSuccess('Đang chuyển hướng đăng nhập Google...');
+            return;
+          }
+          rethrow;
+        }
+      } else if (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.macOS) {
+        final googleSignIn = GoogleSignIn.instance;
+        await googleSignIn.initialize();
+        final googleUser = await googleSignIn.authenticate();
+        if (googleUser == null) return;
+
+        final googleAuth = await googleUser.authentication;
+        final credential = GoogleAuthProvider.credential(
+          idToken: googleAuth.idToken,
+        );
+        await FirebaseAuth.instance.signInWithCredential(credential);
+        _showSuccess('Đăng nhập Google thành công. Đang chuyển vào trang chính...');
+      } else {
+        _showError('Google Sign-In hiện chưa hỗ trợ trên nền tảng này.');
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code != 'popup-closed-by-user' && e.code != 'cancelled-popup-request') {
         _showError('Đăng nhập Google thất bại: ${e.message}');
@@ -99,17 +156,41 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
+  Future<void> _applyRedirectResult() async {
+    if (!kIsWeb) return;
+    try {
+      await FirebaseAuth.instance.getRedirectResult();
+    } catch (_) {
+      // Bỏ qua: người dùng vẫn có thể đăng nhập lại bằng popup/form.
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: EcoColors.mintBg,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 28),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 440),
-              child: Column(
+        child: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, authSnapshot) {
+            final user = authSnapshot.data;
+            if (user != null) {
+              return FutureBuilder<void>(
+                future: _userRepository.createUserIfNotExists(user),
+                builder: (context, profileSnapshot) {
+                  if (profileSnapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return const HomeScreen();
+                },
+              );
+            }
+            return Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 440),
+                  child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Logo
@@ -160,6 +241,10 @@ class _AuthScreenState extends State<AuthScreen> {
 
                   const SizedBox(height: 32),
 
+                  FutureBuilder<void>(
+                    future: _redirectFuture,
+                    builder: (_, __) => const SizedBox.shrink(),
+                  ),
                   // --- Nút Google Sign-In ---
                   SizedBox(
                     width: double.infinity,
@@ -391,6 +476,8 @@ class _AuthScreenState extends State<AuthScreen> {
               ),
             ),
           ),
+            );
+          },
         ),
       ),
     );

@@ -10,6 +10,10 @@ class UserProfile {
   final double totalKgRecycled;
   final int totalOrders;
   final DateTime createdAt;
+  final String role;
+  final int maxPickupLocations;
+  final List<String> savedPartners;
+  final GeoPoint? location;
 
   UserProfile({
     required this.uid,
@@ -21,6 +25,10 @@ class UserProfile {
     required this.totalKgRecycled,
     required this.totalOrders,
     required this.createdAt,
+    required this.role,
+    required this.maxPickupLocations,
+    this.savedPartners = const [],
+    this.location,
   });
 
   factory UserProfile.fromFirestore(DocumentSnapshot doc) {
@@ -35,6 +43,10 @@ class UserProfile {
       totalKgRecycled: (data['totalKgRecycled'] ?? 0).toDouble(),
       totalOrders: data['totalOrders'] ?? 0,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      role: data['role'] ?? 'seller',
+      maxPickupLocations: data['maxPickupLocations'] ?? 2,
+      savedPartners: List<String>.from(data['savedPartners'] ?? []),
+      location: data['location'] as GeoPoint?,
     );
   }
 
@@ -48,6 +60,10 @@ class UserProfile {
       'totalKgRecycled': totalKgRecycled,
       'totalOrders': totalOrders,
       'createdAt': Timestamp.fromDate(createdAt),
+      'role': role,
+      'maxPickupLocations': maxPickupLocations,
+      'savedPartners': savedPartners,
+      if (location != null) 'location': location,
     };
   }
 
@@ -59,6 +75,10 @@ class UserProfile {
     int? greenPoints,
     double? totalKgRecycled,
     int? totalOrders,
+    String? role,
+    int? maxPickupLocations,
+    List<String>? savedPartners,
+    GeoPoint? location,
   }) {
     return UserProfile(
       uid: uid,
@@ -70,6 +90,10 @@ class UserProfile {
       totalKgRecycled: totalKgRecycled ?? this.totalKgRecycled,
       totalOrders: totalOrders ?? this.totalOrders,
       createdAt: createdAt,
+      role: role ?? this.role,
+      maxPickupLocations: maxPickupLocations ?? this.maxPickupLocations,
+      savedPartners: savedPartners ?? this.savedPartners,
+      location: location ?? this.location,
     );
   }
 }

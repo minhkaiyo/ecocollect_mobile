@@ -19,6 +19,13 @@ import 'firebase_options.dart';
 Future<void> main() async {
   // 1. Khởi tạo cầu nối Flutter - Native
   WidgetsFlutterBinding.ensureInitialized();
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('Unhandled platform error: $error');
+    return true;
+  };
 
   // 2. Kích hoạt Firebase
   await Firebase.initializeApp(
@@ -113,11 +120,20 @@ class _AuthWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const _LaunchPlaceholder();
         }
+        if (snapshot.hasError) {
+          return const AuthScreen();
+        }
         if (snapshot.hasData) {
           final user = snapshot.data!;
-          // Khởi tạo profile nếu chưa có
-          UserRepository().createUserIfNotExists(user);
-          return const HomeScreen();
+          return FutureBuilder<void>(
+            future: UserRepository().createUserIfNotExists(user),
+            builder: (context, profileSnapshot) {
+              if (profileSnapshot.connectionState == ConnectionState.waiting) {
+                return const _LaunchPlaceholder();
+              }
+              return const HomeScreen();
+            },
+          );
         }
         return const AuthScreen();
       },
