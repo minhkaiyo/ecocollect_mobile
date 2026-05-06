@@ -131,12 +131,12 @@ class UserRepository extends BaseRepository {
   Stream<List<UserProfile>> watchSavedPartners(String myUid) {
     return _collection.doc(myUid).snapshots().asyncMap((doc) async {
       try {
-        if (!doc.exists) return <UserProfile>[];
+        if (!doc.exists) return [];
         
         final data = doc.data() as Map<String, dynamic>? ?? {};
         final savedIds = List<String>.from(data['savedPartners'] as List? ?? []);
         
-        if (savedIds.isEmpty) return <UserProfile>[];
+        if (savedIds.isEmpty) return [];
 
         // Chunk into groups of 10 (Firestore whereIn limit)
         final chunks = <List<String>>[];
@@ -160,11 +160,11 @@ class UserRepository extends BaseRepository {
         return partners;
       } catch (e, stackTrace) {
         ErrorHandler.logError(e, stackTrace);
-        return <UserProfile>[];
+        return [];
       }
     }).handleError((error, stackTrace) {
       ErrorHandler.logError(error, stackTrace);
-      return Stream.value(<UserProfile>[]);
-    }).cast<List<UserProfile>>();
+      return <UserProfile>[];
+    });
   }
 }
