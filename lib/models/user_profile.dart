@@ -1,5 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../constants/app_constants.dart';
 
+/// User profile model representing a user in the system
+/// 
+/// Roles:
+/// - 'seller': Regular user who sells waste
+/// - 'collector': Waste collector
+/// - 'station': Recycling station
 class UserProfile {
   final String uid;
   final String displayName;
@@ -15,7 +22,7 @@ class UserProfile {
   final List<String> savedPartners;
   final GeoPoint? location;
 
-  UserProfile({
+  const UserProfile({
     required this.uid,
     required this.displayName,
     required this.phone,
@@ -35,17 +42,18 @@ class UserProfile {
     final data = doc.data() as Map<String, dynamic>? ?? {};
     return UserProfile(
       uid: doc.id,
-      displayName: data['displayName'] ?? 'Người dùng',
-      phone: data['phone'] ?? 'Chưa cập nhật',
-      address: data['address'] ?? 'Chưa cập nhật',
-      photoUrl: data['photoUrl'],
-      greenPoints: data['greenPoints'] ?? 0,
-      totalKgRecycled: (data['totalKgRecycled'] ?? 0).toDouble(),
-      totalOrders: data['totalOrders'] ?? 0,
+      displayName: data['displayName'] as String? ?? 'Người dùng',
+      phone: data['phone'] as String? ?? 'Chưa cập nhật',
+      address: data['address'] as String? ?? 'Chưa cập nhật',
+      photoUrl: data['photoUrl'] as String?,
+      greenPoints: (data['greenPoints'] as num?)?.toInt() ?? 0,
+      totalKgRecycled: (data['totalKgRecycled'] as num?)?.toDouble() ?? 0.0,
+      totalOrders: (data['totalOrders'] as num?)?.toInt() ?? 0,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      role: data['role'] ?? 'seller',
-      maxPickupLocations: data['maxPickupLocations'] ?? 2,
-      savedPartners: List<String>.from(data['savedPartners'] ?? []),
+      role: data['role'] as String? ?? 'seller',
+      maxPickupLocations: (data['maxPickupLocations'] as num?)?.toInt() ?? 
+          AppConstants.maxPickupLocationsDefault,
+      savedPartners: List<String>.from(data['savedPartners'] as List? ?? []),
       location: data['location'] as GeoPoint?,
     );
   }
@@ -96,4 +104,32 @@ class UserProfile {
       location: location ?? this.location,
     );
   }
+
+  /// Check if user is a collector
+  bool get isCollector => role == 'collector';
+
+  /// Check if user is a station
+  bool get isStation => role == 'station';
+
+  /// Check if user is a seller (regular user)
+  bool get isSeller => role == 'seller';
+
+  /// Get formatted points display
+  String get pointsDisplay => '$greenPoints Điểm';
+
+  /// Get formatted kg recycled display
+  String get kgRecycledDisplay => '${totalKgRecycled.toStringAsFixed(1)} kg';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UserProfile &&
+          runtimeType == other.runtimeType &&
+          uid == other.uid;
+
+  @override
+  int get hashCode => uid.hashCode;
+
+  @override
+  String toString() => 'UserProfile(uid: $uid, displayName: $displayName, role: $role)';
 }
