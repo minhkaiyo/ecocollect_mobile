@@ -36,4 +36,10 @@ class PaperBankRepository extends BaseRepository {
       'memberCount': FieldValue.increment(1),
     });
   }
+
+  Stream<double> watchUserProgress(String uid) {
+    // Demo implementation: returns a progress value (0.0 to 1.0)
+    // In real app, this would query group progress or individual goals
+    return Stream.value(0.42); 
+  }
 }
