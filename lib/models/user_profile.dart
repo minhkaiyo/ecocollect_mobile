@@ -18,9 +18,12 @@ class UserProfile {
   final int totalOrders;
   final DateTime createdAt;
   final String role;
+  final String subscriptionTier; // 'free', 'pro', 'plus', 'ultra'
   final int maxPickupLocations;
   final List<String> savedPartners;
   final GeoPoint? location;
+
+  bool get isAdmin => phone == 'admin';
 
   const UserProfile({
     required this.uid,
@@ -33,6 +36,7 @@ class UserProfile {
     required this.totalOrders,
     required this.createdAt,
     required this.role,
+    this.subscriptionTier = 'free',
     required this.maxPickupLocations,
     this.savedPartners = const [],
     this.location,
@@ -51,6 +55,7 @@ class UserProfile {
       totalOrders: (data['totalOrders'] as num?)?.toInt() ?? 0,
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       role: data['role'] as String? ?? 'seller',
+      subscriptionTier: data['subscriptionTier'] as String? ?? 'free',
       maxPickupLocations: (data['maxPickupLocations'] as num?)?.toInt() ?? 
           AppConstants.maxPickupLocationsDefault,
       savedPartners: List<String>.from(data['savedPartners'] as List? ?? []),
@@ -69,6 +74,7 @@ class UserProfile {
       'totalOrders': totalOrders,
       'createdAt': Timestamp.fromDate(createdAt),
       'role': role,
+      'subscriptionTier': subscriptionTier,
       'maxPickupLocations': maxPickupLocations,
       'savedPartners': savedPartners,
       if (location != null) 'location': location,
@@ -84,6 +90,7 @@ class UserProfile {
     double? totalKgRecycled,
     int? totalOrders,
     String? role,
+    String? subscriptionTier,
     int? maxPickupLocations,
     List<String>? savedPartners,
     GeoPoint? location,
@@ -99,6 +106,7 @@ class UserProfile {
       totalOrders: totalOrders ?? this.totalOrders,
       createdAt: createdAt,
       role: role ?? this.role,
+      subscriptionTier: subscriptionTier ?? this.subscriptionTier,
       maxPickupLocations: maxPickupLocations ?? this.maxPickupLocations,
       savedPartners: savedPartners ?? this.savedPartners,
       location: location ?? this.location,

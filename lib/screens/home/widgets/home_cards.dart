@@ -27,7 +27,7 @@ class MarketCard extends StatelessWidget {
         children: [
           const EcoSectionHeader(title: 'Giá thị trường hôm nay', live: true),
           const SizedBox(height: 10),
-          ...List.generate(4.clamp(0, wasteTypes.length), (index) {
+          ...List.generate(wasteTypes.length < 4 ? wasteTypes.length : 4, (index) {
             final item = wasteTypes[index];
             return Column(
               children: [
@@ -310,7 +310,7 @@ class PaperBankCard extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(999),
                       child: LinearProgressIndicator(
-                        value: (progress / 50).clamp(0, 1),
+                        value: (progress / 50).clamp(0, 1).toDouble(),
                         minHeight: 12,
                         backgroundColor: Colors.white.withOpacity(.55),
                         color: EcoColors.warmYellow,
@@ -528,7 +528,7 @@ class CollectorMatchCard extends StatelessWidget {
                       children: [
                         CircleAvatar(radius: 20, backgroundColor: EcoColors.mintBg, backgroundImage: c.photoUrl != null ? NetworkImage(c.photoUrl!) : null, child: c.photoUrl == null ? const Icon(Icons.person) : null),
                         const SizedBox(width: 12),
-                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(c.displayName, style: const TextStyle(fontWeight: FontWeight.w900)), Text('4.9 - ${c.totalOrders ?? 0} chuyến', style: const TextStyle(color: EcoColors.bodyMuted, fontSize: 12))])),
+                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(c.displayName, style: const TextStyle(fontWeight: FontWeight.w900)), Text('4.9 - ${c.totalOrders} chuyến', style: const TextStyle(color: EcoColors.bodyMuted, fontSize: 12))])),
                         const Icon(Icons.chevron_right_rounded, color: EcoColors.iconMuted),
                       ],
                     ),

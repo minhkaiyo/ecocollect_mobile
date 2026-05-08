@@ -15,6 +15,14 @@ class PickupLocationRepository extends BaseRepository {
         .map((s) => s.docs.map(PickupLocation.fromFirestore).toList());
   }
 
+  Stream<List<PickupLocation>> watchAllLocationsByType(String type) {
+    return _collection
+        .where('type', isEqualTo: type)
+        .where('active', isEqualTo: true)
+        .snapshots()
+        .map((s) => s.docs.map(PickupLocation.fromFirestore).toList());
+  }
+
   Stream<List<PickupLocation>> watchOwnerLocations(String ownerId) {
     return _collection
         .where('ownerId', isEqualTo: ownerId)
@@ -31,6 +39,7 @@ class PickupLocationRepository extends BaseRepository {
     required double lat,
     required double lng,
     required int maxLocations,
+    String type = 'pickup',
   }) async {
     final existing = await _collection
         .where('ownerId', isEqualTo: ownerId)
@@ -49,6 +58,7 @@ class PickupLocationRepository extends BaseRepository {
       'address': address,
       'geoPoint': GeoPoint(lat, lng),
       'active': true,
+      'type': type,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }

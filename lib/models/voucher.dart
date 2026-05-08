@@ -11,6 +11,7 @@ class Voucher {
   final String? targetSellerId;
   final double minKgRequired;
   final DateTime? expiresAt;
+  final String? imageUrl;
 
   Voucher({
     required this.id,
@@ -23,6 +24,7 @@ class Voucher {
     this.targetSellerId,
     this.minKgRequired = 0.0,
     this.expiresAt,
+    this.imageUrl,
   });
 
   factory Voucher.fromFirestore(DocumentSnapshot doc) {
@@ -38,6 +40,7 @@ class Voucher {
       targetSellerId: data['targetSellerId'],
       minKgRequired: (data['minKgRequired'] ?? 0).toDouble(),
       expiresAt: (data['expiresAt'] as Timestamp?)?.toDate(),
+      imageUrl: data['imageUrl'],
     );
   }
 
@@ -52,6 +55,7 @@ class Voucher {
       if (targetSellerId != null) 'targetSellerId': targetSellerId,
       'minKgRequired': minKgRequired,
       if (expiresAt != null) 'expiresAt': Timestamp.fromDate(expiresAt!),
+      if (imageUrl != null) 'imageUrl': imageUrl,
     };
   }
 }

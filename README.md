@@ -6,7 +6,7 @@
 [![Backend](https://img.shields.io/badge/Backend-Firebase-FFCA28)](https://firebase.google.com/)
 
 <p align="center">
-  <img src="images/Trang_chu_ECC.png" width="800" alt="EcoCollect Home">
+  <img src="images/Trang_chu_ECC.png" width="700" alt="EcoCollect Home">
 </p>
 
 ## 💡 Concept
@@ -22,15 +22,15 @@ Mục tiêu của dự án là thúc đẩy nền kinh tế tuần hoàn, tăng 
 ## 📸 Giao diện Ứng dụng
 
 <p align="center">
-  <img src="images/Map_ECC_2.png" width="260" alt="Radar Map">
-  <img src="images/Diem_xanh_ECC.png" width="260" alt="Green Points">
-  <img src="images/Voucher_ECC.png" width="260" alt="Vouchers">
+  <img src="images/Map_ECC_2.png" width="220" alt="Radar Map">
+  <img src="images/Diem_xanh_ECC.png" width="220" alt="Green Points">
+  <img src="images/Voucher_ECC.png" width="220" alt="Vouchers">
 </p>
 
 <p align="center">
-  <img src="images/Profile_ECC.png" width="260" alt="User Profile">
-  <img src="images/History_ECC.jpg" width="260" alt="History">
-  <img src="images/Map_ECC3.png" width="260" alt="Radar Detail">
+  <img src="images/Profile_ECC.png" width="220" alt="User Profile">
+  <img src="images/History_ECC.jpg" width="220" alt="History">
+  <img src="images/Map_ECC3.png" width="220" alt="Radar Detail">
 </p>
 
 ---

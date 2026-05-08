@@ -1,5 +1,6 @@
+import 'dart:typed_data';
+
 import 'package:latlong2/latlong.dart';
-import '../repositories/geocoding_repository.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -267,8 +268,23 @@ class _SchedulePickupSheetState extends State<SchedulePickupSheet> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(14),
-                  child: Image.network(_imageFile!.path, fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image, size: 32))),
+                  child: FutureBuilder<Uint8List>(
+                    future: _imageFile!.readAsBytes(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(
+                          child: CircularProgressIndicator(color: EcoColors.primary),
+                        );
+                      }
+                      return Image.memory(
+                        snapshot.data!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Center(
+                          child: Icon(Icons.broken_image, size: 32),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
               Positioned(

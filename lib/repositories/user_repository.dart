@@ -17,22 +17,36 @@ class UserRepository extends BaseRepository {
     try {
       final docRef = _collection.doc(user.uid);
       final docSnap = await docRef.get();
+      final bool isAdmin = user.email == 'admin@ecocollect.com';
 
       if (!docSnap.exists) {
         final newProfile = UserProfile(
           uid: user.uid,
-          displayName: user.displayName ?? 'Người dùng',
-          phone: user.phoneNumber ?? 'Chưa cập nhật',
+          displayName: isAdmin ? 'Quản trị viên' : (user.displayName ?? 'Người dùng'),
+          phone: isAdmin ? 'admin' : (user.phoneNumber ?? 'Chưa cập nhật'),
           address: 'Chưa cập nhật',
           photoUrl: user.photoURL,
           greenPoints: 0,
           totalKgRecycled: 0,
           totalOrders: 0,
           createdAt: DateTime.now(),
-          role: 'seller',
-          maxPickupLocations: AppConstants.maxPickupLocationsDefault,
+          role: isAdmin ? 'admin' : 'seller',
+          subscriptionTier: isAdmin ? 'ultra' : 'free',
+          maxPickupLocations: isAdmin ? 9999 : AppConstants.maxPickupLocationsDefault,
         );
         await docRef.set(newProfile.toFirestore());
+      } else if (isAdmin) {
+        // Doc đã tồn tại nhưng cần đảm bảo các trường admin luôn đúng
+        final data = docSnap.data() as Map<String, dynamic>? ?? {};
+        if (data['phone'] != 'admin') {
+          await docRef.update({
+            'phone': 'admin',
+            'role': 'admin',
+            'subscriptionTier': 'ultra',
+            'maxPickupLocations': 9999,
+            'displayName': 'Quản trị viên',
+          });
+        }
       }
     } catch (e, stackTrace) {
       ErrorHandler.logError(e, stackTrace);
@@ -98,6 +112,22 @@ class UserRepository extends BaseRepository {
     } catch (e, stackTrace) {
       ErrorHandler.logError(e, stackTrace);
       throw Exception('Không thể cập nhật hồ sơ: ${ErrorHandler.getErrorMessage(e)}');
+    }
+  }
+
+  /// Upgrade subscription tier
+  Future<void> upgradeTier(String uid, String tier) async {
+    try {
+      final tierData = AppConstants.subTiers[tier];
+      if (tierData == null) throw Exception('Gói không hợp lệ');
+
+      await _collection.doc(uid).update({
+        'subscriptionTier': tier,
+        'maxPickupLocations': tierData['limit'],
+      });
+    } catch (e, stackTrace) {
+      ErrorHandler.logError(e, stackTrace);
+      throw Exception('Nâng cấp thất bại: ${ErrorHandler.getErrorMessage(e)}');
     }
   }
 

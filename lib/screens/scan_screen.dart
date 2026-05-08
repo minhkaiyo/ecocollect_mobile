@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../theme/eco_colors.dart';
@@ -90,8 +90,23 @@ class _ScanScreenState extends State<ScanScreen> {
               child: _image != null
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(24),
-                      child: Image.network(_image!.path, fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image, size: 48))),
+                      child: FutureBuilder<Uint8List>(
+                        future: _image!.readAsBytes(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Center(
+                              child: CircularProgressIndicator(color: EcoColors.primary),
+                            );
+                          }
+                          return Image.memory(
+                            snapshot.data!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => const Center(
+                              child: Icon(Icons.broken_image, size: 48),
+                            ),
+                          );
+                        },
+                      ),
                     )
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,

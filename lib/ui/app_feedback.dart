@@ -2,9 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../theme/eco_colors.dart';
+import 'package:flutter/foundation.dart';
 
 void ecoLightTap() {
-  HapticFeedback.lightImpact();
+  if (kIsWeb) return; // Disable on web to avoid browser interventions
+  try {
+    HapticFeedback.lightImpact();
+  } catch (e) {
+    debugPrint('Haptic error: $e');
+  }
+}
+
+void ecoSuccessTap() {
+  if (kIsWeb) return;
+  try {
+    HapticFeedback.mediumImpact();
+  } catch (e) {
+    debugPrint('Haptic error: $e');
+  }
 }
 
 void showEcoSnackBar(

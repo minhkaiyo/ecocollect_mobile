@@ -78,17 +78,52 @@ class _AuthScreenState extends State<AuthScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
 
+    String email = _emailController.text.trim();
+    final String password = _passwordController.text.trim();
+
+    // Xử lý đăng nhập Admin đặc biệt
+    bool isAdminLogin = false;
+    if (email.toLowerCase() == 'admin' && password == '123456789') {
+      email = 'admin@ecocollect.com';
+      isAdminLogin = true;
+    }
+
     try {
       if (_isLogin) {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
-        );
+        if (isAdminLogin) {
+          // Admin: thử đăng nhập, nếu lỗi bất kỳ thì tạo tài khoản rồi đăng nhập lại
+          try {
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+              email: email,
+              password: password,
+            );
+          } on FirebaseAuthException catch (_) {
+            // Tài khoản chưa tồn tại hoặc lỗi xác thực → tạo mới
+            try {
+              await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                email: email,
+                password: password,
+              );
+            } on FirebaseAuthException catch (createErr) {
+              // Nếu tài khoản đã tồn tại (email-already-in-use) thì thử đăng nhập lại
+              if (createErr.code != 'email-already-in-use') rethrow;
+              await FirebaseAuth.instance.signInWithEmailAndPassword(
+                email: email,
+                password: password,
+              );
+            }
+          }
+        } else {
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+        }
         _showSuccess('Đăng nhập thành công. Đang chuyển vào trang chính...');
       } else {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
+          email: email,
+          password: password,
         );
         _showSuccess('Đăng ký thành công. Đang đăng nhập...');
       }
@@ -345,10 +380,11 @@ class _AuthScreenState extends State<AuthScreen> {
                               filled: true,
                               fillColor: EcoColors.surfaceMuted,
                             ),
-                            validator: (value) {
+                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
                                 return 'Vui lòng nhập email.';
                               }
+                              if (value.trim().toLowerCase() == 'admin') return null; // Cho phép admin
                               if (!value.contains('@')) {
                                 return 'Email không hợp lệ.';
                               }

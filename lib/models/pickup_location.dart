@@ -9,6 +9,7 @@ class PickupLocation {
   final GeoPoint geoPoint;
   final DateTime createdAt;
   final bool active;
+  final String type; // 'pickup' (Người mua đến lấy) hoặc 'collection' (Người bán mang đến)
 
   const PickupLocation({
     required this.id,
@@ -19,6 +20,7 @@ class PickupLocation {
     required this.geoPoint,
     required this.createdAt,
     required this.active,
+    this.type = 'pickup',
   });
 
   factory PickupLocation.fromFirestore(DocumentSnapshot doc) {
@@ -32,6 +34,7 @@ class PickupLocation {
       geoPoint: data['geoPoint'] as GeoPoint? ?? const GeoPoint(21.0285, 105.8542),
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       active: data['active'] ?? true,
+      type: data['type'] ?? 'pickup',
     );
   }
 }

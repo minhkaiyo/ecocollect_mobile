@@ -11,7 +11,7 @@ class CollectorRepository extends BaseRepository {
     
     // Tìm kiếm đơn giản (do Firestore không hỗ trợ full text search tự nhiên tốt)
     final snap = await _collection
-        .where('role', isEqualTo: 'buyer')
+        .where('role', isEqualTo: 'collector')
         .where('displayName', isGreaterThanOrEqualTo: query)
         .where('displayName', isLessThanOrEqualTo: '$query\uf8ff')
         .get();
@@ -21,7 +21,7 @@ class CollectorRepository extends BaseRepository {
 
   Future<UserProfile?> findByPhone(String phone) async {
     final snap = await _collection
-        .where('role', isEqualTo: 'buyer')
+        .where('role', isEqualTo: 'collector')
         .where('phone', isEqualTo: phone)
         .limit(1)
         .get();
@@ -32,7 +32,7 @@ class CollectorRepository extends BaseRepository {
 
   Future<List<UserProfile>> findNearby(LatLng from, {double radiusKm = 5.0}) async {
     final snap = await _collection
-        .where('role', isEqualTo: 'buyer')
+        .where('role', isEqualTo: 'collector')
         .get();
         
     final all = snap.docs.map(UserProfile.fromFirestore).toList();

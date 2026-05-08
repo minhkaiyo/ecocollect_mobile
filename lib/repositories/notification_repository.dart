@@ -25,9 +25,16 @@ class NotificationRepository extends BaseRepository {
   Stream<List<Map<String, dynamic>>> watchUserNotifications(String userId) {
     return _collection
         .where('userId', isEqualTo: userId)
-        .orderBy('createdAt', descending: true)
-        .limit(30)
         .snapshots()
-        .map((s) => s.docs.map((e) => {'id': e.id, ...e.data()}).toList());
+        .map((s) {
+          final list = s.docs.map((e) => {'id': e.id, ...e.data()}).toList();
+          list.sort((a, b) {
+            final tA = a['createdAt'] as Timestamp?;
+            final tB = b['createdAt'] as Timestamp?;
+            if (tA == null || tB == null) return 0;
+            return tB.compareTo(tA);
+          });
+          return list;
+        });
   }
 }

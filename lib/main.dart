@@ -15,6 +15,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
+import 'seeds/seed_vouchers.dart' as seed;
 
 Future<void> main() async {
   // 1. Khởi tạo cầu nối Flutter - Native
@@ -32,7 +33,14 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // 3. Bật tính năng Offline-First (Lưu data khi rớt mạng)
+  // 3. Auto-seed vouchers
+  try {
+    await seed.runSeed();
+  } catch (e) {
+    debugPrint('Seed error: $e');
+  }
+
+  // 4. Bật tính năng Offline-First (Lưu data khi rớt mạng)
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: true,
     cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,

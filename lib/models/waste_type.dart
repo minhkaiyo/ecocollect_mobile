@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'price_point.dart';
 
 class WasteType {
   const WasteType(
@@ -7,8 +8,9 @@ class WasteType {
     this.price,
     this.icon,
     this.color,
-    this.guide,
-  );
+    this.guide, {
+    this.priceHistory = const [],
+  });
 
   final String name;
   final String range;
@@ -16,4 +18,5 @@ class WasteType {
   final IconData icon;
   final Color color;
   final String guide;
+  final List<PricePoint> priceHistory;
 }
